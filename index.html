@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en-GB" data-mode="day">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Archie's Herne Hill · All-day Latin American dining</title>
+    <meta name="description" content="Brunch, lunch, dinner and cocktails on Railton Road, a minute from Herne Hill station, overlooking Brockwell Park." />
+    <link rel="canonical" href="https://alexwilder-dev.github.io/archies-herne-hill/" />
+    <meta name="theme-color" content="#3b4229" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Archie's Herne Hill" />
+    <meta property="og:title" content="Archie's Herne Hill · All-day Latin American dining" />
+    <meta property="og:description" content="Brunch, lunch, dinner and cocktails on Railton Road, a minute from Herne Hill station, overlooking Brockwell Park." />
+    <meta property="og:url" content="https://alexwilder-dev.github.io/archies-herne-hill/" />
+    <meta property="og:image" content="https://alexwilder-dev.github.io/archies-herne-hill/og.jpg" />
+    <meta property="og:image:secure_url" content="https://alexwilder-dev.github.io/archies-herne-hill/og.jpg" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Sharing plates of corn ribs and tacos at Archie's Herne Hill, with the Archie's logo" />
+    <meta property="og:locale" content="en_GB" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Archie's Herne Hill · All-day Latin American dining" />
+    <meta name="twitter:description" content="Brunch, lunch, dinner and cocktails on Railton Road, a minute from Herne Hill station, overlooking Brockwell Park." />
+    <meta name="twitter:image" content="https://alexwilder-dev.github.io/archies-herne-hill/og.jpg" />
+    <meta name="twitter:image:alt" content="Sharing plates of corn ribs and tacos at Archie's Herne Hill, with the Archie's logo" />
+
+    <link rel="icon" type="image/png" sizes="32x32" href="https://alexwilder-dev.github.io/archies-herne-hill/favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="https://alexwilder-dev.github.io/archies-herne-hill/icon-192.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="https://alexwilder-dev.github.io/archies-herne-hill/apple-touch-icon.png" />
+    <link rel="manifest" href="https://alexwilder-dev.github.io/archies-herne-hill/site.webmanifest" />
+
+    <script>
+      (function () {
+        try {
+          var s = sessionStorage.getItem('archies-mode')
+          if (s === 'day' || s === 'evening') { document.documentElement.dataset.mode = s; return }
+        } catch (e) {}
+        try {
+          var p = {}
+          new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/London', weekday: 'short', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' })
+            .formatToParts(new Date()).forEach(function (x) { p[x.type] = x.value })
+          var late = ['Wed', 'Thu', 'Fri', 'Sat'].indexOf(p.weekday) > -1
+          var mins = Number(p.hour) * 60 + Number(p.minute)
+          document.documentElement.dataset.mode = late && mins >= 1050 ? 'evening' : 'day'
+        } catch (e) {}
+      })()
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <noscript>
+      <p style="padding:24px;font-family:sans-serif">Archie's Herne Hill · 319–321 Railton Road, London SE24 0JN · hello@archieslondon.co.uk</p>
+    </noscript>
+    <script type="module" src="/src/main.tsx"></script>
+    <script>
+    (() => {
+      try {
+        if (location.hash === '#me') localStorage.setItem('me', '1');
+        if (localStorage.getItem('me') || sessionStorage.getItem('pinged')) return;
+        sessionStorage.setItem('pinged', '1');
+      } catch (e) {}
+      const v = new URLSearchParams(location.search).get('v') || 'untagged';
+      fetch('https://ntfy.sh/YOUR-NTFY-TOPIC', {
+        method: 'POST', body: `${v} opened ${location.pathname}`, keepalive: true
+      }).catch(() => {});
+    })();
+    </script>
+  </body>
+</html>

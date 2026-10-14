@@ -1,0 +1,72 @@
+{
+  "shopfront-railton-road": {
+    "w": 1280,
+    "h": 1600,
+    "tone": "rgb(200,200,200)"
+  },
+  "brunch-eggs-bloody-mary": {
+    "w": 5362,
+    "h": 6702,
+    "tone": "rgb(40,40,24)"
+  },
+  "banquette-candlelight": {
+    "w": 960,
+    "h": 1200,
+    "tone": "rgb(56,40,8)"
+  },
+  "fried-calamari-charred-lemon": {
+    "w": 1280,
+    "h": 1600,
+    "tone": "rgb(232,232,232)"
+  },
+  "cocktail-tajin-pineapple": {
+    "w": 1280,
+    "h": 960,
+    "tone": "rgb(72,56,40)"
+  },
+  "choclitos-corn-ribs": {
+    "w": 1280,
+    "h": 1600,
+    "tone": "rgb(56,56,40)"
+  },
+  "tacos-pickled-onion": {
+    "w": 1280,
+    "h": 1600,
+    "tone": "rgb(56,56,40)"
+  },
+  "sharing-plates-spread": {
+    "w": 1280,
+    "h": 960,
+    "tone": "rgb(104,88,56)"
+  },
+  "steak-over-flames": {
+    "w": 960,
+    "h": 1200,
+    "tone": "rgb(72,56,40)"
+  },
+  "eggs-green-red-salsa": {
+    "w": 1280,
+    "h": 1600,
+    "tone": "rgb(24,24,8)"
+  },
+  "party-table-dahlias": {
+    "w": 960,
+    "h": 800,
+    "tone": "rgb(104,104,120)"
+  },
+  "private-dining-room-mural": {
+    "w": 961,
+    "h": 1209,
+    "tone": "rgb(8,8,8)"
+  },
+  "arched-roof-dining-room": {
+    "w": 960,
+    "h": 1280,
+    "tone": "rgb(8,8,8)"
+  },
+  "fascia-awning": {
+    "w": 1600,
+    "h": 900,
+    "tone": "rgb(248,184,136)"
+  }
+}
