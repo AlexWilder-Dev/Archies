@@ -1,8 +1,8 @@
 {
   "name": "Archie's Herne Hill",
   "short_name": "Archie's",
-  "start_url": "/archies-herne-hill/",
-  "scope": "/archies-herne-hill/",
+  "start_url": "./",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#f6ebe2",
   "theme_color": "#3b4229",

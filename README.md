@@ -32,7 +32,7 @@ npm run build     # type-check and build to dist/
 npm run preview   # serve the build
 ```
 
-The site is built for GitHub Pages under `/archies-herne-hill/` (see `vite.config.ts`) and uses hash routing, so deep links work on static hosting. `.github/workflows/deploy.yml` builds and publishes on every push to `main`.
+The build uses relative asset paths and hash routing, so it works on GitHub Pages under any repository name and deep links work on static hosting. The link-preview tags in `index.html` point at `https://alexwilder-dev.github.io/archies-herne-hill/`. `.github/workflows/deploy.yml` builds and publishes on every push; in the repository's Pages settings, Source must be set to **GitHub Actions**.
 
 ### Media
 
