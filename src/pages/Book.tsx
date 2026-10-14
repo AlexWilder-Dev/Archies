@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
-import { Photo } from '../components/Photo'
+import { AMono } from '../components/Marks'
 import { BOOKING, DAY_SHORT, HOURS, fmtTime } from '../data/hours'
 import { site } from '../data/site'
 import { addDays, formatKey, monthShort, parseKey } from '../lib/london'
@@ -70,18 +70,17 @@ export function Book() {
   const ref = useMemo(() => 'AHH-' + Math.random().toString(36).slice(2, 7).toUpperCase(), [stage === 'done'])
 
   return (
-    <div className="book" ref={top}>
+    <div className="book page g-board" ref={top}>
       <section className="book-hero">
         <div className="wrap book-hero__inner">
           <div>
             <p className="label">Archie’s Herne Hill</p>
-            <h1 className="t-xl">Book a table</h1>
-            <p className="lede">Brunch, lunch or dinner. Booking is recommended at weekends.</p>
+            <h1 className="display d-xl">Book a table</h1>
+            <p className="lede">Brunch, lunch or dinner, in a few taps. Booking is recommended at weekends.</p>
           </div>
           <aside className="walkin" aria-label="Walk-ins">
-            <p>
-              <strong>Walk-ins welcome.</strong> No booking needed for the lounge and the outside tables: first come, first served.
-            </p>
+            <p className="label">Walk-ins welcome</p>
+            <p>No booking needed for the lounge and the outside tables: first come, first served. Dogs and families welcome.</p>
           </aside>
         </div>
       </section>
@@ -186,7 +185,7 @@ export function Book() {
                 <button type="button" className="linkish book-back" onClick={() => toStage('pick')}>
                   ← Change table
                 </button>
-                <h2 className="t-m">
+                <h2 className="display d-m">
                   {size} {size === 1 ? 'person' : 'people'} · {formatKey(date)} · {time !== null && fmtTime(time)}
                 </h2>
                 <div className="form-grid">
@@ -227,31 +226,27 @@ export function Book() {
         </div>
 
         <aside className="book__aside" aria-label="Your table">
-          <div className="ticket">
-            <div className="ticket__arch">
-              <p className="label ticket__title">Your table</p>
-              <dl className="ticket__rows">
-                <div>
-                  <dt>Guests</dt>
-                  <dd>{size === 'big' ? `${BOOKING.maxOnlineParty + 1}+` : size}</dd>
-                </div>
-                <div>
-                  <dt>Day</dt>
-                  <dd>{formatKey(date)}</dd>
-                </div>
-                <div>
-                  <dt>Time</dt>
-                  <dd>{time !== null ? `${fmtTime(time)}${service ? ` · ${SERVICE_LABEL[service]}` : ''}` : '—'}</dd>
-                </div>
-              </dl>
-              <p className="ticket__where">
-                {site.address.oneLine}
-                <br />A minute from Herne Hill station
-              </p>
-            </div>
-          </div>
-          <div className="book__photo">
-            <Photo name={service === 'dinner' ? 'banquette-candlelight' : 'shopfront-railton-road'} shape="none" sizes="340px" />
+          <div className="ticket arch g-paper">
+            <AMono />
+            <p className="label ticket__title">Your table</p>
+            <dl className="ticket__rows">
+              <div>
+                <dt>Guests</dt>
+                <dd>{size === 'big' ? `${BOOKING.maxOnlineParty + 1}+` : size}</dd>
+              </div>
+              <div>
+                <dt>Day</dt>
+                <dd>{formatKey(date)}</dd>
+              </div>
+              <div>
+                <dt>Time</dt>
+                <dd>{time !== null ? `${fmtTime(time)}${service ? ` · ${SERVICE_LABEL[service]}` : ''}` : '—'}</dd>
+              </div>
+            </dl>
+            <p className="ticket__where">
+              {site.address.oneLine}
+              <br />A minute from Herne Hill station
+            </p>
           </div>
         </aside>
       </div>
@@ -287,12 +282,10 @@ function Confirmation({ size, date, time, service, name, email, bookingRef, onAg
 
   return (
     <motion.div className="confirm" initial={{ opacity: 0, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.45 }}>
-      <div className="confirm__card">
-        <motion.div className="confirm__stamp" initial={{ scale: 2, rotate: -20, opacity: 0 }} animate={{ scale: 1, rotate: -8, opacity: 1 }} transition={{ type: 'spring', stiffness: 260, damping: 16, delay: 0.2 }}>
-          Booked
-        </motion.div>
+      <div className="confirm__card arch g-paper">
+        <AMono />
         <p className="label">See you soon{name ? `, ${name.split(' ')[0]}` : ''}</p>
-        <h2 className="t-l">
+        <h2 className="print confirm__title">
           Table for {size}, {formatKey(date)} at {fmtTime(time)}.
         </h2>
         <p className="muted">
@@ -300,7 +293,7 @@ function Confirmation({ size, date, time, service, name, email, bookingRef, onAg
         </p>
         <p className="small muted">This is a demo: no booking has been made and nothing has been sent.</p>
         <div className="confirm__ctas">
-          <a className="btn" href={ics} download="archies-herne-hill.ics">
+          <a className="btn btn--ink" href={ics} download="archies-herne-hill.ics">
             Add to calendar
           </a>
           <a className="link" href={site.maps} target="_blank" rel="noreferrer">

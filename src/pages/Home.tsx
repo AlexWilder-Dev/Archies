@@ -1,379 +1,303 @@
 import { AnimatePresence, motion } from 'framer-motion'
-import type { ReactNode } from 'react'
+import { useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Newsletter } from '../components/home/Extras'
 import { WalkMap } from '../components/home/WalkMap'
-import { OpenPill } from '../components/OpenPill'
+import { Logo } from '../components/Logo'
+import { AMono, Pinned } from '../components/Marks'
 import { Photo } from '../components/Photo'
-import { SPACES } from '../data/hire'
+import { HOURS_ROWS } from '../data/hours'
 import type { PhotoName } from '../data/media'
-import { FEASTS, findItem, type FeastMenu, type MenuItem } from '../data/menu'
+import { findItem } from '../data/menu'
 import { site } from '../data/site'
-import { useMode } from '../lib/mode'
+import { openStatus } from '../lib/london'
+import { useMode, type Mode } from '../lib/mode'
 
 const ease = [0.22, 1, 0.36, 1] as const
 
-/* A photograph that uncovers itself as it scrolls into view. */
-function Frame({ name, className = '', sizes, caption, eager, position }: { name: PhotoName; className?: string; sizes: string; caption?: string; eager?: boolean; position?: string }) {
-  return (
-    <motion.figure
-      className={`frame ${className}`}
-      initial={eager ? false : { clipPath: 'inset(10% 0% 0% 0%)', opacity: 0 }}
-      whileInView={{ clipPath: 'inset(0% 0% 0% 0%)', opacity: 1 }}
-      viewport={{ once: true, margin: '0px 0px -10% 0px' }}
-      transition={{ duration: 1.2, ease }}
-    >
-      <Photo name={name} shape="none" sizes={sizes} eager={eager} position={position} />
-      {caption && <figcaption className="caption">{caption}</figcaption>}
-    </motion.figure>
-  )
-}
-
-function Rise({ children, className = '', delay = 0 }: { children: ReactNode; className?: string; delay?: number }) {
-  return (
-    <motion.div className={className} initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '0px 0px -8% 0px' }} transition={{ duration: 0.9, delay, ease }}>
-      {children}
-    </motion.div>
-  )
-}
-
-const pick = (ids: string[]) => ids.map((id) => findItem(id)).filter(Boolean) as MenuItem[]
-
-function price(i: MenuItem) {
-  if (i.price) return i.price
-  return (i.prices ?? []).filter((p) => p.price).map((p) => (p.label ? `${p.label} – ${p.price}` : p.price)).join(' | ')
-}
-
-/* Menu lines set the way Archie's prints them */
-function Dishes({ items, short = false }: { items: MenuItem[]; short?: boolean }) {
-  return (
-    <ul className={`dishes ${short ? 'dishes--short' : ''}`}>
-      {items.map((i) => (
-        <li key={i.id}>
-          <p className="dishes__name">
-            {i.name} <span className="dishes__price">{price(i)}</span>
-          </p>
-          {!short && i.desc && (
-            <p className="dishes__desc">
-              {i.desc}
-              {i.diet?.length ? ` (${i.diet.join(', ')})` : ''}
-            </p>
-          )}
-        </li>
-      ))}
-    </ul>
-  )
-}
-
-/* ------------------------------------------------------------------ */
-
 export function Home() {
-  const { mode } = useMode()
-  const evening = mode === 'evening'
   return (
     <div className="home">
       <Hero />
-      <Services />
-      {evening ? <Evenings lead /> : <Brunch lead />}
-      <Gallery />
-      {evening ? <Brunch /> : <Evenings />}
-      <Feasting />
-      <Hire />
+      <Board />
+      <Wall />
+      <FeastHire />
       <FindUs />
-      <Closing />
     </div>
   )
 }
 
-/* ---- hero ------------------------------------------------------------ */
+/* ---- the photograph, and the sign across it ------------------------- */
 
-const HERO = {
-  day: {
-    photo: 'brunch-eggs-bloody-mary' as PhotoName,
-    position: '50% 62%',
-    second: 'fascia-awning' as PhotoName,
-    lede: 'Brunch and coffee from 9am, seven days a week. Lunch from midday, and dinner with cocktails until 11pm, Wednesday to Saturday.',
-  },
-  evening: {
-    photo: 'shopfront-railton-road' as PhotoName,
-    position: '50% 46%',
-    second: 'banquette-candlelight' as PhotoName,
-    lede: 'Dinner from 5:30pm and cocktails until 11pm, Wednesday to Saturday, with feasting menus for the whole table.',
-  },
+const HERO: Record<Mode, { photo: PhotoName; position: string; line: string }> = {
+  day: { photo: 'brunch-eggs-bloody-mary', position: '50% 58%', line: 'Brunch, lunch and coffee, every day' },
+  evening: { photo: 'steak-over-flames', position: '50% 40%', line: 'Dinner from the grill, cocktails at the bar' },
 }
 
 function Hero() {
-  const { mode } = useMode()
+  const { mode, now } = useMode()
   const h = HERO[mode]
+  const status = openStatus(now)
   return (
     <section className="hero" aria-labelledby="hero-title">
-      <div className="hero__photo">
+      <div className="hero__media">
         <AnimatePresence initial={false}>
-          <motion.div key={h.photo} className="hero__photo-layer" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.9 }}>
-            <Photo name={h.photo} shape="none" eager sizes="(max-width: 900px) 100vw, 58vw" position={h.position} />
+          <motion.div
+            key={h.photo}
+            className="hero__layer"
+            initial={{ opacity: 0, scale: 1.04 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ opacity: { duration: 1 }, scale: { duration: 2.6, ease } }}
+          >
+            <Photo name={h.photo} shape="none" eager sizes="100vw" position={h.position} />
           </motion.div>
         </AnimatePresence>
       </div>
-      <div className="hero__text">
-        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, ease, delay: 0.1 }}>
-          <p className="label">Herne Hill, London SE24</p>
-          <h1 id="hero-title" className="t-xl hero__title">
-            All-day Latin American dining on Railton Road
-          </h1>
-          <AnimatePresence mode="wait" initial={false}>
-            <motion.p key={mode} className="lede hero__lede" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.4 }}>
-              {h.lede}
-            </motion.p>
-          </AnimatePresence>
-          <OpenPill className="hero__status" />
-          <div className="hero__actions">
-            <Link to={mode === 'evening' ? '/book?service=dinner&time=1140' : '/book'} className="btn">
+      <div className="hero__shade" aria-hidden="true" />
+      <div className="hero__bottom">
+        <motion.div className="hero__row" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.5, ease }}>
+          <p className="hero__status" role="status">
+            <span className={`dot ${status.open ? 'is-open' : ''}`} aria-hidden="true" />
+            <span>
+              {status.label}
+              {/^(until|at) /.test(status.detail) ? ' ' : ' · '}
+              {status.detail}
+              <AnimatePresence mode="wait" initial={false}>
+                {status.open && (
+                  <motion.span key={mode} className="hero__line" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.4 }}>
+                    {' · '}
+                    {h.line}
+                  </motion.span>
+                )}
+              </AnimatePresence>
+            </span>
+          </p>
+          <p className="hero__where sign">319–321 Railton Road · Herne Hill SE24</p>
+        </motion.div>
+        <h1 id="hero-title" className="hero__mark">
+          <span className="sr-only">Archie’s Herne Hill: all-day Latin American dining</span>
+          <motion.span className="hero__mark-in" initial={{ y: '104%' }} animate={{ y: '0%' }} transition={{ duration: 1.3, delay: 0.15, ease }}>
+            <Logo className="hero__logo" title="" />
+          </motion.span>
+        </h1>
+      </div>
+    </section>
+  )
+}
+
+/* ---- the price board ------------------------------------------------- */
+
+interface Row {
+  id: string
+  name: string
+  price: string
+  photo?: PhotoName
+  caption?: string
+}
+
+const BOARD: Record<Mode, { label: string; photo: PhotoName; caption: string; rows: Row[]; book: string; bookLabel: string; menu: string; menuLabel: string; note: string }> = {
+  evening: {
+    label: 'Tonight · from 5:30pm',
+    photo: 'cocktail-tajin-pineapple',
+    caption: 'From the bar',
+    rows: [
+      { id: 'choclitos', name: 'Choclitos', price: '5', photo: 'choclitos-corn-ribs', caption: 'Choclitos: fried corn ribs, lime, tajín' },
+      { id: 'pork-belly-tacos', name: 'Pork belly tacos', price: '12', photo: 'tacos-pickled-onion', caption: 'Tacos, from the lunch and dinner menu' },
+      { id: 'oaxaca-ceviche', name: 'Oaxaca ceviche', price: '11' },
+      { id: 'pollo-a-la-brasa', name: 'Pollo a la brasa', price: '19 | 35' },
+      { id: 'grilled-picanha', name: 'Picanha, 600g', price: '49', photo: 'steak-over-flames', caption: 'From the grill' },
+      { id: 'picante', name: 'Picante', price: '12', photo: 'cocktail-tajin-pineapple', caption: 'From the bar' },
+    ],
+    book: '/book?service=dinner&time=1140',
+    bookLabel: 'Book dinner',
+    menu: '/menu?tab=lunch-dinner',
+    menuLabel: 'Full menu',
+    note: 'Wednesday to Saturday, until 11pm',
+  },
+  day: {
+    label: 'Brunch · from 9am, every day',
+    photo: 'eggs-green-red-salsa',
+    caption: 'Eggs in green and red salsa, black beans, crumbled cheese',
+    rows: [
+      { id: 'huevos-rancheros', name: 'Huevos rancheros', price: '13', photo: 'eggs-green-red-salsa', caption: 'Eggs in green and red salsa, black beans, crumbled cheese' },
+      { id: 'breakfast-burrito', name: 'Breakfast burrito', price: '14' },
+      { id: 'avocado-toast', name: 'Avocado toast', price: '11' },
+      { id: 'breakfast-bun', name: 'Breakfast bun', price: '10' },
+      { id: 'bloody-mary', name: 'Bloody Maria', price: '12', photo: 'brunch-eggs-bloody-mary', caption: 'Eggs in the pan, and a Bloody Maria' },
+      { id: 'flat-white', name: 'Flat white', price: '3.6' },
+    ],
+    book: '/book?service=brunch&time=630',
+    bookLabel: 'Book brunch',
+    menu: '/menu?tab=brunch',
+    menuLabel: 'Brunch menu',
+    note: 'Lunch from 12pm · dinner from 5:30pm, Wednesday to Saturday',
+  },
+}
+
+function Board() {
+  const { mode } = useMode()
+  const b = BOARD[mode]
+  const [hover, setHover] = useState<Row | null>(null)
+  const shown = hover?.photo ? { photo: hover.photo, caption: hover.caption ?? '' } : { photo: b.photo, caption: b.caption }
+  return (
+    <section className="board g-board" aria-labelledby="board-title">
+      <div className="board__photo">
+        <AnimatePresence initial={false}>
+          <motion.div key={shown.photo} className="board__layer" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.5 }}>
+            <Photo name={shown.photo} shape="none" sizes="(max-width: 900px) 100vw, 50vw" />
+            <p className="board__caption hand">{shown.caption}</p>
+          </motion.div>
+        </AnimatePresence>
+      </div>
+      <div className="board__panel">
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div key={mode} className="board__inner" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.4 }}>
+            <h2 id="board-title" className="label board__label">
+              {b.label}
+            </h2>
+            <ul className="board__rows" onMouseLeave={() => setHover(null)}>
+              {b.rows.map((r, i) => {
+                const item = findItem(r.id)
+                return (
+                  <motion.li key={r.id} initial={{ opacity: 0, x: 18 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, margin: '0px 0px -10% 0px' }} transition={{ duration: 0.7, delay: i * 0.06, ease }}>
+                    <Link to={`${b.menu}`} className={`board__row ${hover?.id === r.id ? 'is-on' : ''}`} onMouseEnter={() => setHover(r)} onFocus={() => setHover(r)} onBlur={() => setHover(null)}>
+                      <span className="board__name display">{r.name}</span>
+                      <span className="board__price">{r.price}</span>
+                      {item?.desc && <span className="board__desc">{item.desc}</span>}
+                    </Link>
+                  </motion.li>
+                )
+              })}
+            </ul>
+            <p className="board__note">{b.note}</p>
+            <div className="actions">
+              <Link to={b.book} className="btn">
+                {b.bookLabel}
+              </Link>
+              <Link to={b.menu} className="link">
+                {b.menuLabel}
+              </Link>
+              <Link to="/menu?tab=drinks" className="link board__drinks">
+                Drinks
+              </Link>
+            </div>
+          </motion.div>
+        </AnimatePresence>
+      </div>
+    </section>
+  )
+}
+
+/* ---- the room: photographs on the plaster ---------------------------- */
+
+function Wall() {
+  const { mode } = useMode()
+  const wall = useRef<HTMLDivElement>(null)
+  return (
+    <section className="wall g-wall" aria-labelledby="wall-title" id="the-room">
+      <div className="wall__inner">
+        <div className="wall__text">
+          <p className="label">319–321 Railton Road · Herne Hill</p>
+          <h2 id="wall-title" className="display d-l">
+            Artwork, neon, plants and Latin American food, all day
+          </h2>
+          <p className="lede">Two floors on the corner of Railton Road: the open kitchen and bar under the arched roof downstairs, and the mural room upstairs, looking over Brockwell Park.</p>
+          <p className="wall__walkin">
+            <strong>Walk-ins welcome</strong> in the lounge and at the outside tables. Booking is recommended at weekends. Dogs and families welcome.
+          </p>
+          <div className="actions">
+            <Link to="/book" className="btn">
               Book a table
             </Link>
-            <Link to={mode === 'evening' ? '/menu?tab=lunch-dinner' : '/menu?tab=brunch'} className="link">
-              Menus
+            <Link to="/menu" className="link">
+              The menus
             </Link>
           </div>
-        </motion.div>
-        <div className="hero__aside">
+        </div>
+
+        <div className="wall__board" ref={wall}>
+          <Pinned wall={wall} name="private-dining-room-mural" caption="Upstairs, the mural room" r={-4} x="14%" y="0%" w="37%" z={2} />
+          <Pinned wall={wall} name="banquette-candlelight" caption="The banquette, after dark" r={4} x="55%" y="3%" w="30%" z={3} delay={0.08} />
+          <Pinned wall={wall} name="choclitos-corn-ribs" caption="Choclitos 5" r={-6} x="73%" y="49%" w="26%" z={5} ar="1 / 1.05" delay={0.16} />
+          <Pinned wall={wall} name="arched-roof-dining-room" caption="Downstairs, under the arched roof" r={2.5} x="37%" y="55%" w="33%" z={4} ar="4 / 4" delay={0.24} />
+          <Pinned wall={wall} name="fascia-awning" r={-2} x="1%" y="60%" w="33%" z={3} ar="16 / 10" position="50% 40%" delay={0.3} />
+          <motion.figure
+            className="clipping"
+            initial={{ opacity: 0, rotate: 9, y: -20 }}
+            whileInView={{ opacity: 1, rotate: 5, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ type: 'spring', stiffness: 110, damping: 15, delay: 0.36 }}
+          >
+            <blockquote>
+              <p>“For brunch: Archie’s”</p>
+            </blockquote>
+            <figcaption>
+              {site.press.source}, in its local guide to Herne Hill
+            </figcaption>
+          </motion.figure>
           <AnimatePresence mode="wait" initial={false}>
-            <motion.div key={h.second} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.6 }}>
-              <Photo name={h.second} shape="none" sizes="(max-width: 900px) 40vw, 14vw" />
-            </motion.div>
+            <motion.span
+              key={mode}
+              className="neon wall__neon"
+              aria-hidden="true"
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: [0, 0.9, 0.2, 1, 0.5, 1] }}
+              exit={{ opacity: 0 }}
+              viewport={{ once: false, margin: '-20% 0px' }}
+              transition={{ duration: 1.4, times: [0, 0.1, 0.18, 0.3, 0.38, 1] }}
+            >
+              {mode === 'evening' ? 'cocktails' : 'all day'}
+            </motion.span>
           </AnimatePresence>
-          <p className="hero__where">A minute from Herne Hill station, overlooking Brockwell Park.</p>
         </div>
       </div>
     </section>
   )
 }
 
-/* ---- the day, in one line ------------------------------------------- */
+/* ---- feasting and private hire, in the arch ------------------------- */
 
-function Services() {
-  const rows = [
-    ['Brunch', 'From 9am, every day'],
-    ['Lunch', 'From 12pm, every day'],
-    ['Dinner', 'From 5:30pm, Wednesday to Saturday'],
-    ['Walk-ins', 'Lounge and outside tables, first come, first served'],
-  ]
+const WINDOWS = [
+  { photo: 'private-dining-room-mural' as PhotoName, title: 'Private Dining Room', meta: 'Up to 20 seated · Tuesday to Sunday', to: '/private-hire', scrollTo: 'pdr' },
+  { photo: 'sharing-plates-spread' as PhotoName, title: 'Feasting menus', meta: '£45pp and £55pp, for the middle of the table', to: '/menu?tab=feasting', tall: true },
+  { photo: 'arched-roof-dining-room' as PhotoName, title: 'The whole building', meta: '35 seated or 100 standing, with DJ and sound system', to: '/private-hire', scrollTo: 'exclusive' },
+]
+
+function FeastHire() {
   return (
-    <section className="wrap services" aria-label="Service times">
-      {rows.map(([k, v], i) => (
-        <Rise key={k} className="services__item" delay={i * 0.06}>
-          <p className="label">{k}</p>
-          <p>{v}</p>
-        </Rise>
-      ))}
-    </section>
-  )
-}
-
-/* ---- brunch ----------------------------------------------------------- */
-
-function Brunch({ lead = false }: { lead?: boolean }) {
-  const food = pick(['huevos-rancheros', 'breakfast-burrito', 'avocado-toast', 'breakfast-bun'])
-  const drinks = pick(['bloody-mary', 'michelada', 'mimosa', 'flat-white'])
-  return (
-    <section className={`spread ${lead ? 'spread--lead' : 'spread--band spread--light'}`} aria-labelledby="brunch-title">
-      <div className="wrap spread__grid">
-        <div className="spread__text">
-          <Rise>
-            <p className="label">Every day from 9am</p>
-            <h2 id="brunch-title" className="t-l">
-              Brunch
-            </h2>
-          </Rise>
-          <Rise className="spread__menu">
-            <Dishes items={food} />
-            <p className="label spread__sub">To drink</p>
-            <Dishes items={drinks} short />
-          </Rise>
-          <Rise className="spread__actions">
-            <Link to="/book?service=brunch&time=630" className="btn">
-              Book brunch
-            </Link>
-            <Link to="/menu?tab=brunch" className="link">
-              The full brunch menu
-            </Link>
-          </Rise>
-          <Rise className="quote">
-            <p className="quote__text">
-              <span className="quote__mark">“</span>For brunch: Archie’s<span className="quote__mark">”</span>
-            </p>
-            <p className="quote__source">{site.press.source}, in its local guide to Herne Hill</p>
-          </Rise>
-        </div>
-        <Frame name={lead ? 'eggs-green-red-salsa' : 'brunch-eggs-bloody-mary'} className="spread__photo" sizes="(max-width: 900px) 100vw, 52vw" caption={lead ? 'Eggs in green and red salsa, black beans, crumbled cheese' : 'Eggs over salsa in the pan, and a Bloody Mary'} />
-      </div>
-    </section>
-  )
-}
-
-/* ---- evenings ------------------------------------------------------- */
-
-function Evenings({ lead = false }: { lead?: boolean }) {
-  const mains = pick(['pollo-a-la-brasa', 'grilled-picanha', 'feijoada', 'swordfish'])
-  const bar = pick(['tommys-margarita', 'picante', 'mezcalero', 'paloma'])
-  return (
-    <section className={`spread spread--flip ${lead ? 'spread--lead' : 'spread--band spread--dark'}`} aria-labelledby="evening-title">
-      <div className="wrap spread__grid">
-        <div className="spread__text">
-          <Rise>
-            <p className="label">Wednesday to Saturday, from 5:30pm</p>
-            <h2 id="evening-title" className="t-l">
-              Dinner &amp; cocktails
-            </h2>
-            <p className="spread__intro">Soft lighting, the open kitchen and the bar under the arched roof, until 11pm.</p>
-          </Rise>
-          <Rise className="spread__menu">
-            <Dishes items={mains} />
-            <p className="label spread__sub">From the bar</p>
-            <Dishes items={bar} short />
-          </Rise>
-          <Rise className="spread__actions">
-            <Link to="/book?service=dinner&time=1140" className="btn">
-              Book dinner
-            </Link>
-            <Link to="/menu?tab=lunch-dinner" className="link">
-              Lunch &amp; dinner menu
-            </Link>
-            <Link to="/menu?tab=drinks" className="link link--quiet">
-              Drinks
-            </Link>
-          </Rise>
-        </div>
-        <Frame name={lead ? 'steak-over-flames' : 'banquette-candlelight'} className="spread__photo" sizes="(max-width: 900px) 100vw, 52vw" caption={lead ? 'On the grill' : 'Downstairs, in the evening'} />
-      </div>
-    </section>
-  )
-}
-
-/* ---- three from the kitchen and bar --------------------------------- */
-
-function Gallery() {
-  return (
-    <section className="wrap gallery" aria-label="From the kitchen and the bar">
-      <Frame name="choclitos-corn-ribs" className="gallery__a" sizes="(max-width: 900px) 60vw, 36vw" caption="Choclitos: fried corn ribs, lime, tajín" />
-      <Frame name="tacos-pickled-onion" className="gallery__b" sizes="(max-width: 900px) 50vw, 26vw" caption="Tacos, from the lunch and dinner menu" />
-      <Frame name="cocktail-tajin-pineapple" className="gallery__c" sizes="(max-width: 900px) 50vw, 26vw" caption="From the bar" />
-    </section>
-  )
-}
-
-/* ---- feasting ------------------------------------------------------- */
-
-function FeastArch({ f }: { f: FeastMenu }) {
-  const dishes = [...f.starters, ...f.mains, ...(f.dessert ?? [])]
-  return (
-    <Link to="/menu?tab=feasting" className="arch-card" aria-label={`${f.title}, ${f.price}`}>
-      <span className="arch-card__inner">
-        <svg className="arch-card__a" width="18" height="30" viewBox="0 0 31 50" aria-hidden="true">
-          <path d="M3 48 V17 a12.5 12.5 0 0 1 25 0 V48 M3 30 H28" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
-        </svg>
-        <span className="arch-card__title">{f.title}</span>
-        <span className="arch-card__price">{f.price}</span>
-        <span className="arch-card__rule" />
-        {dishes.map((d) => (
-          <span key={d.id} className="arch-card__dish">
-            {d.name}
-          </span>
-        ))}
-        <span className="arch-card__sides">with {f.sides.join(', ').toLowerCase()}</span>
-      </span>
-    </Link>
-  )
-}
-
-function Feasting() {
-  return (
-    <section className="feasting" aria-labelledby="feast-title">
-      <Frame name="sharing-plates-spread" className="feasting__photo" sizes="100vw" position="50% 55%" />
-      <div className="wrap feasting__grid">
-        <Rise className="feasting__text">
-          <p className="label">For the whole table</p>
-          <h2 id="feast-title" className="t-l">
-            Feasting
-          </h2>
-          <p className="spread__intro">Two sharing menus, £45pp and £55pp, each brought to the middle of the table with cassava chips, broccoli and a trio of house salsas.</p>
-          <div className="spread__actions">
-            <Link to="/menu?tab=feasting" className="link">
-              Both menus in full
-            </Link>
-            <Link to="/private-hire" state={{ scrollTo: 'enquire' }} className="link link--quiet">
-              Feasting for a party
-            </Link>
-          </div>
-        </Rise>
-        <div className="feasting__cards">
-          {FEASTS.map((f, i) => (
-            <Rise key={f.id} delay={i * 0.1}>
-              <FeastArch f={f} />
-            </Rise>
-          ))}
-        </div>
-      </div>
-    </section>
-  )
-}
-
-/* ---- private hire ------------------------------------------------- */
-
-const SPECS: Record<string, [string, string][]> = {
-  pdr: [
-    ['Where', 'First floor'],
-    ['Guests', 'Up to 20 seated'],
-    ['When', 'Tuesday to Sunday, for brunch, lunch or dinner'],
-    ['The room', 'Colourful mural, fabric blinds, views over Brockwell Park'],
-  ],
-  exclusive: [
-    ['Where', 'Both floors'],
-    ['Guests', '35 seated or 100 standing'],
-    ['When', 'Day hire Tuesday to Friday, evening hire Tuesday to Sunday'],
-    ['Included', 'DJ setup, sound system and the snug breakout bar'],
-  ],
-}
-
-function Hire() {
-  return (
-    <section className="hire-home" aria-labelledby="hire-title">
-      <div className="wrap">
-        <Rise className="hire-home__head">
-          <p className="label">Private hire</p>
-          <h2 id="hire-title" className="t-l">
-            Upstairs, or the whole building
-          </h2>
-          <p className="spread__intro">Birthdays, weddings and work dos. One inbox for every enquiry: <a className="text-link" href={`mailto:${site.hireEmail}`}>{site.hireEmail}</a></p>
-        </Rise>
-        <div className="hire-home__spaces">
-          {SPACES.map((s, i) => (
-            <article key={s.id} className={`space-sum ${i ? 'space-sum--b' : ''}`}>
-              <Link to="/private-hire" state={{ scrollTo: s.id }} className="space-sum__photo">
-                <Frame name={s.photo} sizes="(max-width: 900px) 100vw, 40vw" />
+    <section className="feasthire g-feast" aria-labelledby="feasthire-title">
+      <motion.div className="arch feasthire__arch g-paper" initial={{ y: 80, opacity: 0.6 }} whileInView={{ y: 0, opacity: 1 }} viewport={{ once: true, margin: '0px 0px -5% 0px' }} transition={{ duration: 1.1, ease }}>
+        <AMono />
+        <p className="label feasthire__kicker">For the whole table, or the whole building</p>
+        <h2 id="feasthire-title" className="print feasthire__title">
+          Feasting &amp; private hire
+        </h2>
+        <p className="feasthire__intro">Two sharing menus, brought to the middle of the table. Take the private dining room upstairs for up to 20, or the whole building for 35 seated and 100 standing.</p>
+        <div className="windows">
+          {WINDOWS.map((w, i) => (
+            <motion.div key={w.title} className={`window ${w.tall ? 'window--tall' : ''}`} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '0px 0px -8% 0px' }} transition={{ duration: 0.9, delay: 0.15 + i * 0.1, ease }}>
+              <Link to={w.to} state={w.scrollTo ? { scrollTo: w.scrollTo } : undefined} className="window__link">
+                <span className="window__frame arch">
+                  <Photo name={w.photo} shape="none" sizes="(max-width: 900px) 80vw, 300px" />
+                </span>
+                <span className="window__title">{w.title}</span>
+                <span className="window__meta">{w.meta}</span>
               </Link>
-              <Rise>
-                <h3 className="t-m">{s.name}</h3>
-                <dl className="specs">
-                  {SPECS[s.id].map(([k, v]) => (
-                    <div key={k}>
-                      <dt>{k}</dt>
-                      <dd>{v}</dd>
-                    </div>
-                  ))}
-                </dl>
-              </Rise>
-            </article>
+            </motion.div>
           ))}
         </div>
-        <Rise className="spread__actions hire-home__actions">
-          <Link to="/private-hire" state={{ scrollTo: 'enquire' }} className="btn">
-            Make an enquiry
+        <div className="actions feasthire__actions">
+          <Link to="/private-hire" state={{ scrollTo: 'enquire' }} className="btn btn--ink">
+            Plan a party
           </Link>
-          <Link to="/private-hire" className="link">
-            Private hire in detail
+          <Link to="/menu?tab=feasting" className="link">
+            Both feasting menus
           </Link>
-        </Rise>
-      </div>
+        </div>
+        <p className="feasthire__email">
+          Every enquiry goes to Emma: <a className="text-link" href={`mailto:${site.hireEmail}`}>{site.hireEmail}</a>
+        </p>
+      </motion.div>
     </section>
   )
 }
@@ -383,68 +307,55 @@ function Hire() {
 function FindUs() {
   const { now } = useMode()
   const sunday = now.weekday === 0
+  const rows: [string, string][] = [
+    ['Herne Hill station', 'a minute’s walk'],
+    ['Brockwell Park', 'across the road'],
+    [site.market.name, sunday ? 'on today, 10am–4pm' : 'Sundays, 10am–4pm'],
+  ]
   return (
-    <section className="wrap findus" id="find-us" aria-labelledby="find-title">
-      <Rise className="findus__text">
-        <p className="label">Find us</p>
-        <h2 id="find-title" className="t-l">
-          319–321 Railton Road
-        </h2>
-        <p className="findus__addr">Herne Hill, London SE24 0JN</p>
-        <p>A minute’s walk from Herne Hill station. The dining room upstairs looks out over Brockwell Park.</p>
-        <p className={sunday ? 'findus__today' : ''}>
-          {sunday ? 'Today' : 'On Sundays'}, {site.market.name} runs along Railton Road from 10am to 4pm.
-        </p>
-        <table className="hours">
-          <tbody>
-            <tr>
-              <th scope="row">Wednesday to Saturday</th>
-              <td>9am – 11pm</td>
-            </tr>
-            <tr>
-              <th scope="row">Sunday, Monday, Tuesday</th>
-              <td>9am – 5pm</td>
-            </tr>
-          </tbody>
-        </table>
-        <p className="small muted">Dogs and families welcome. Booking recommended at weekends.</p>
-        <div className="spread__actions">
-          <a className="link" href={site.maps} target="_blank" rel="noreferrer">
-            Directions
-          </a>
-          <a className="link link--quiet" href={`mailto:${site.email}`}>
-            {site.email}
-          </a>
+    <section className="findus g-cream" id="find-us" aria-labelledby="find-title">
+      <div className="wrap findus__grid">
+        <div className="findus__text">
+          <p className="label">Find us</p>
+          <h2 id="find-title" className="display d-l">
+            319–321 Railton Road
+          </h2>
+          <p className="findus__addr">Herne Hill, London SE24 0JN</p>
+          <ul className="findus__rows">
+            {rows.map(([k, v]) => (
+              <li key={k}>
+                <span>{k}</span>
+                <span className={k === site.market.name && sunday ? 'is-today' : ''}>{v}</span>
+              </li>
+            ))}
+          </ul>
+          <p className="label findus__hours-label">Opening hours</p>
+          <ul className="findus__rows findus__rows--hours">
+            {HOURS_ROWS.map((r) => (
+              <li key={r.short}>
+                <span>{r.days}</span>
+                <span>{r.hours}</span>
+              </li>
+            ))}
+          </ul>
+          <p className="small muted">Brunch from 9am, lunch from 12pm, dinner from 5:30pm Wednesday to Saturday.</p>
+          <div className="actions">
+            <a className="btn btn--ink" href={site.maps} target="_blank" rel="noreferrer">
+              Directions
+            </a>
+            <a className="link" href={`mailto:${site.email}`}>
+              {site.email}
+            </a>
+          </div>
         </div>
-      </Rise>
-      <Rise className="findus__map" delay={0.1}>
-        <WalkMap sunday={sunday} />
-      </Rise>
-    </section>
-  )
-}
-
-/* ---- gift cards, newsletter, Archway ------------------------------ */
-
-function Closing() {
-  return (
-    <section className="wrap closing" aria-label="Gift cards, newsletter and Archie’s Archway">
-      <div className="closing__item">
-        <p className="label">Gift cards</p>
-        <p>Bought online, spent on brunch, dinner or drinks.</p>
-        <a className="link" href={site.giftCards} target="_blank" rel="noreferrer">
-          Buy a gift card
-        </a>
-      </div>
-      <div className="closing__item">
-        <Newsletter />
-      </div>
-      <div className="closing__item">
-        <p className="label">Our sister site</p>
-        <p>Archie’s Archway, in north London.</p>
-        <a className="link" href={site.sister.url} target="_blank" rel="noreferrer">
-          archieslondon.co.uk
-        </a>
+        <div className="findus__map">
+          <div className="arch findus__arch g-paper">
+            <AMono />
+            <p className="label findus__dome">A minute from the station</p>
+            <WalkMap sunday={sunday} />
+          </div>
+          <Pinned name="shopfront-railton-road" caption="On the corner, at dusk" r={5} className="findus__pin" ar="4 / 5" sizes="(max-width: 900px) 40vw, 220px" />
+        </div>
       </div>
     </section>
   )

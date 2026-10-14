@@ -6,9 +6,10 @@ It is a front-end demo: full visual design and interactions on static data. Ther
 
 ## What's in it
 
-- **Day and evening states.** The site reads London time against the opening hours (evening from 5:30pm, Wednesday to Saturday). By day it leads with brunch and coffee; in the evening it swaps to the evening photographs and colours and leads with dinner, cocktails and feasting. The Day / Evening switch in the header overrides it for the visit.
-- **Home** — the restaurant's own photographs set as editorial spreads: hero with the open-now line, service times, brunch and dinner (in the order the time of day calls for), a gallery from the kitchen and bar, the feasting menus as their arched cards, both private hire spaces, find us (station, Brockwell Park, the Sunday market), gift cards, newsletter and the Archway sister site.
-- **Menus** (`#/menu`) — Brunch, Lunch & Dinner, Feasting and Drinks, transcribed from the restaurant's PDFs into `src/data/menu.ts`, with v / vg / gf filters (gf includes gf* options), serving times and the 12.5% service note.
+- **Three looks, taken from the restaurant itself.** A full-bleed photograph with the wordmark across it and a dark price board (the evening), the arch from their printed feasting menus on the feast yellow (menus, feasting, private hire), and photographs pinned to the plaster wall with neon (the room).
+- **Day and evening states.** The site reads London time against the opening hours (evening from 5:30pm, Wednesday to Saturday). By day it leads with brunch on the shopfront green; in the evening it switches to the grill photograph, the night board and dinner, cocktails and feasting, and the lights go down on the wall. The Day / Evening switch in the header overrides it for the visit.
+- **Home** — the hero with the open-now line, the price board (hover a dish to swap the photograph), the room as a wall of prints you can move around on a desktop, feasting and private hire in the arch, find us (station, Brockwell Park, the Sunday market), and in the footer gift cards, the newsletter and the Archway sister site.
+- **Menus** (`#/menu`) — Brunch, Lunch & Dinner, Feasting and Drinks, transcribed from the restaurant's PDFs into `src/data/menu.ts` and set inside the arch the way they print them, with v / vg / gf filters (gf includes gf* options), serving times and the 12.5% service note.
 - **Private hire** (`#/private-hire`) — the Private Dining Room and Exclusive Venue Hire, both feasting menus, and a seven-step enquiry: space → date → guests → occasion → menu → contact → summary → success.
 - **Book** (`#/book`) — party size, date and time slots built from the opening hours, details, confirmation and an add-to-calendar file.
 
@@ -21,7 +22,7 @@ It is a front-end demo: full visual design and interactions on static data. Ther
 | Private hire spaces and options | `src/data/hire.ts` |
 | Address, emails, links | `src/data/site.ts` |
 | Photo alt text | `src/data/media.ts` |
-| Palette (sampled from the logo and photos) | `src/styles/base.css` |
+| Palette and grounds (sampled from the logo, menus and photos) | `src/styles/base.css` |
 
 ## Develop
 

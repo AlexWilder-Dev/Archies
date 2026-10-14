@@ -1,8 +1,11 @@
 /* ------------------------------------------------------------------
-   Book a table
+   Book a table: on the board
    ------------------------------------------------------------------ */
+.book {
+  min-height: 100vh;
+}
 .book-hero {
-  padding-block: clamp(56px, 7vw, 100px) clamp(32px, 4vw, 48px);
+  padding-block: clamp(48px, 6vw, 88px) clamp(28px, 3vw, 44px);
 }
 .book-hero__inner {
   display: grid;
@@ -17,17 +20,18 @@
   padding-top: 16px;
   border-top: 1px solid var(--line-2);
 }
-.walkin p {
+.walkin .label {
+  margin-bottom: 8px;
+  color: var(--orange);
+}
+.walkin p:last-child {
   margin: 0;
   color: var(--soft);
-}
-.walkin strong {
-  color: var(--ink);
 }
 
 .book__grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 340px;
+  grid-template-columns: minmax(0, 1fr) 360px;
   gap: clamp(32px, 5vw, 88px);
   align-items: start;
   padding-bottom: clamp(80px, 9vw, 130px);
@@ -37,9 +41,8 @@
 }
 .book__aside {
   position: sticky;
-  top: calc(var(--header-h) + 28px);
-  display: grid;
-  gap: 18px;
+  top: calc(var(--top-shown) + 28px);
+  transition: top 420ms var(--ease);
 }
 
 .book-step {
@@ -55,16 +58,19 @@
 .book-step__legend {
   display: flex;
   align-items: baseline;
-  gap: 12px;
+  gap: 14px;
   float: left;
   width: 100%;
-  margin-bottom: 18px;
+  margin-bottom: 20px;
   padding: 0;
   font-family: var(--font-sign);
   font-weight: 300;
-  font-size: clamp(18px, 1.5vw, 22px);
-  letter-spacing: 0.12em;
+  font-size: clamp(22px, 2vw, 30px);
+  letter-spacing: 0.06em;
   text-transform: uppercase;
+}
+.book-step__legend .enq__n {
+  color: var(--orange);
 }
 .book-step__legend + * {
   clear: both;
@@ -74,8 +80,22 @@
   margin: 0 0 16px;
   color: var(--soft);
 }
+.enq__n {
+  font-family: var(--font-sign);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+}
+.enq__nudge {
+  margin: 0;
+  padding: 14px 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  font-size: 16px;
+  color: var(--soft);
+}
 
-/* party size */
+/* party size: numbers as on the board */
 .sizes {
   clear: both;
   display: flex;
@@ -83,26 +103,29 @@
   gap: 6px;
 }
 .size {
-  width: 52px;
-  height: 52px;
-  border: 1px solid var(--line-2);
+  width: 58px;
+  height: 64px;
+  border: 0;
+  box-shadow: inset 0 0 0 1px var(--line-2);
   background: transparent;
-  font-size: 19px;
+  font-family: var(--font-sign);
+  font-weight: 300;
+  font-size: 26px;
   transition:
     background-color 150ms,
-    border-color 150ms,
+    box-shadow 150ms,
     color 150ms;
 }
 .size:hover {
-  border-color: var(--ink);
+  box-shadow: inset 0 0 0 1px var(--ink);
 }
 .size[aria-checked='true'] {
-  background: var(--ink);
-  border-color: var(--ink);
-  color: var(--bg);
+  background: var(--orange);
+  box-shadow: none;
+  color: var(--ink-0);
 }
 .size--big {
-  width: 64px;
+  width: 72px;
 }
 @media (max-width: 480px) {
   .sizes {
@@ -143,21 +166,22 @@
   display: grid;
   justify-items: center;
   gap: 1px;
-  width: 68px;
+  width: 70px;
   padding: 12px 0 10px;
-  border: 1px solid var(--line-2);
+  border: 0;
+  box-shadow: inset 0 0 0 1px var(--line-2);
   background: transparent;
   scroll-snap-align: start;
   transition:
     background-color 150ms,
-    border-color 150ms;
+    box-shadow 150ms;
 }
 .day:hover:not(:disabled) {
-  border-color: var(--ink);
+  box-shadow: inset 0 0 0 1px var(--ink);
 }
 .day[aria-checked='true'] {
   background: var(--ink);
-  border-color: var(--ink);
+  box-shadow: none;
   color: var(--bg);
 }
 .day:disabled {
@@ -171,8 +195,10 @@
   text-transform: uppercase;
 }
 .day__num {
+  font-family: var(--font-sign);
+  font-weight: 300;
   font-size: 24px;
-  line-height: 1.15;
+  line-height: 1.25;
 }
 .day__mon {
   font-size: 13px;
@@ -195,6 +221,7 @@
   align-items: center;
   gap: 8px;
   margin: 6px 0 0;
+  color: var(--soft);
 }
 .days__swatch {
   width: 10px;
@@ -216,38 +243,34 @@
   font-size: 10px;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: var(--faint);
+  color: var(--soft);
 }
 .slots {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(84px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(86px, 1fr));
   gap: 4px;
 }
 .slot {
-  min-height: 46px;
-  border: 1px solid var(--line-2);
+  min-height: 48px;
+  border: 0;
+  box-shadow: inset 0 0 0 1px var(--line-2);
   background: transparent;
-  font-size: 16px;
+  font-size: 17px;
   transition:
     background-color 150ms,
-    border-color 150ms;
+    box-shadow 150ms;
 }
 .slot:hover:not(:disabled) {
-  border-color: var(--ink);
+  box-shadow: inset 0 0 0 1px var(--ink);
 }
 .slot:disabled {
   opacity: 0.3;
   text-decoration: line-through;
 }
 .slot[aria-checked='true'] {
-  background: var(--ink);
-  border-color: var(--ink);
-  color: var(--bg);
-}
-.slot-group--dinner .slot[aria-checked='true'] {
   background: var(--orange);
-  border-color: var(--orange);
-  color: #26231a;
+  box-shadow: none;
+  color: var(--ink-0);
 }
 
 .book__go {
@@ -257,9 +280,10 @@
   padding: 14px 0 max(14px, env(safe-area-inset-bottom));
   background: var(--bg);
   border-top: 1px solid var(--line);
+  transition: background-color 700ms var(--ease);
 }
 .book__go .btn {
-  min-height: 56px;
+  min-height: 58px;
   white-space: normal;
   text-align: center;
   line-height: 1.3;
@@ -267,7 +291,7 @@
 .book__go .btn[disabled] {
   opacity: 1;
   background: transparent;
-  border-color: var(--line-2);
+  box-shadow: inset 0 0 0 1px var(--line-2);
   color: var(--faint);
 }
 
@@ -282,28 +306,32 @@
 }
 .book-details .small {
   margin: 0;
+  color: var(--soft);
 }
 
-/* summary */
+/* your table: a card of menu paper */
 .ticket {
-  border: 1px solid var(--line-2);
-  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 72px 28px 28px;
+  text-align: center;
 }
-.ticket__arch {
-  display: grid;
-  gap: 10px;
+.ticket .amono {
+  margin-bottom: 12px;
 }
 .ticket__title {
-  margin: 0;
+  margin: 0 0 8px;
 }
 .ticket__rows {
   display: grid;
+  width: 100%;
   margin: 0;
 }
 .ticket__rows div {
   display: grid;
   gap: 2px;
-  padding: 10px 0;
+  padding: 12px 0;
   border-top: 1px solid var(--line);
 }
 .ticket__rows dt {
@@ -316,38 +344,48 @@
 }
 .ticket__rows dd {
   margin: 0;
-  font-size: 18px;
+  font-weight: 700;
+  font-size: 19px;
 }
 .ticket__where {
-  margin: 6px 0 0;
-  font-size: 14px;
+  margin: 10px 0 0;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+  width: 100%;
+  font-size: 15px;
   color: var(--soft);
-}
-.book__photo .photo {
-  aspect-ratio: 4 / 4.4;
 }
 
 /* confirmation */
-.confirm__card {
-  position: relative;
-  display: grid;
-  gap: 16px;
-  justify-items: start;
-  padding: 32px 0;
+.confirm {
+  padding-top: 28px;
   border-top: 1px solid var(--line);
+}
+.confirm__card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  max-width: 640px;
+  padding: clamp(72px, 9vw, 110px) clamp(20px, 4vw, 48px) 40px;
+  text-align: center;
 }
 .confirm__card p {
   margin: 0;
+  max-width: 44ch;
 }
-.confirm__card .t-l {
-  max-width: 20ch;
+.confirm__card .label {
+  margin: 0;
 }
-.confirm__stamp {
-  display: none;
+.confirm__title {
+  font-size: clamp(26px, 3vw, 38px);
+  max-width: 16em;
+  text-wrap: balance;
 }
 .confirm__ctas {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   align-items: center;
   gap: 16px 28px;
   margin-top: 10px;

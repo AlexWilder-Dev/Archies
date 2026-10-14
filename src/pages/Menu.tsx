@@ -1,7 +1,7 @@
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion'
 import { useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
-import { Photo } from '../components/Photo'
+import { AMono, Pinned } from '../components/Marks'
 import { DIET_KEY, FEASTS, MENUS, SERVICE_NOTE, type Diet, type FeastMenu, type Menu, type MenuItem, type MenuSection } from '../data/menu'
 import type { PhotoName } from '../data/media'
 import { useMode } from '../lib/mode'
@@ -20,18 +20,31 @@ const MATCH: Record<Filter, Diet[]> = {
   gf: ['gf', 'gf*'],
 }
 
-const BAND: Record<Menu['id'], { photo: PhotoName; position: string }> = {
-  brunch: { photo: 'brunch-eggs-bloody-mary', position: '50% 66%' },
-  'lunch-dinner': { photo: 'sharing-plates-spread', position: '50% 45%' },
-  feasting: { photo: 'party-table-dahlias', position: '50% 40%' },
-  drinks: { photo: 'cocktail-tajin-pineapple', position: '50% 50%' },
-}
-
 const SERVED: Record<Menu['id'], string> = {
-  brunch: 'From 9am, every day',
-  'lunch-dinner': 'Lunch from 12pm, every day · dinner from 5:30pm, Wednesday to Saturday',
+  brunch: 'Served from 9am, every day',
+  'lunch-dinner': 'Served from 12pm & 5:30pm',
   feasting: 'Two sharing menus · £45pp and £55pp',
   drinks: 'Cocktails, wine, beer and coffee, all day',
+}
+
+/* prints pinned either side of the menu on wide screens */
+const PINS: Record<Menu['id'], [{ name: PhotoName; caption: string }, { name: PhotoName; caption: string }]> = {
+  brunch: [
+    { name: 'eggs-green-red-salsa', caption: 'Eggs, green and red salsa' },
+    { name: 'brunch-eggs-bloody-mary', caption: 'Eggs in the pan, and a Bloody Mary' },
+  ],
+  'lunch-dinner': [
+    { name: 'choclitos-corn-ribs', caption: 'Choclitos 5' },
+    { name: 'tacos-pickled-onion', caption: 'Tacos, with pickled onion' },
+  ],
+  feasting: [
+    { name: 'sharing-plates-spread', caption: 'For the middle of the table' },
+    { name: 'party-table-dahlias', caption: 'Set for a party' },
+  ],
+  drinks: [
+    { name: 'cocktail-tajin-pineapple', caption: 'From the bar' },
+    { name: 'banquette-candlelight', caption: 'After dark' },
+  ],
 }
 
 function matches(item: MenuItem, filters: Filter[]) {
@@ -80,23 +93,12 @@ export function MenuPage() {
     return { sections, total, shown }
   }, [active, filters])
 
-  const band = BAND[active.id]
+  const pins = PINS[active.id]
+  const book = active.id === 'brunch' ? '/book?service=brunch' : active.id === 'lunch-dinner' ? '/book?service=dinner&time=1140' : '/book'
 
   return (
-    <div className="menu-page">
-      <header className="wrap menu-head">
-        <p className="label">Archie’s Herne Hill</p>
-        <h1 className="t-xl">Menus</h1>
-        <p className="lede">Brunch from 9am every day. Lunch from 12pm. Dinner from 5:30pm, Wednesday to Saturday.</p>
-      </header>
-
-      <div className="menu-band" aria-hidden="true">
-        <AnimatePresence initial={false}>
-          <motion.div key={band.photo} className="menu-band__layer" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.8 }}>
-            <Photo name={band.photo} shape="none" eager sizes="100vw" position={band.position} />
-          </motion.div>
-        </AnimatePresence>
-      </div>
+    <div className={`menu-page page ${mode === 'evening' ? 'g-night' : 'g-feast'}`}>
+      <h1 className="sr-only">Menus at Archie’s Herne Hill</h1>
 
       <div className="menu-bar">
         <div className="wrap menu-bar__inner">
@@ -110,7 +112,7 @@ export function MenuPage() {
                   id={`tab-${m.id}`}
                   aria-selected={m.id === active.id}
                   aria-controls="menu-panel"
-                  className={`menu-tab ${m.id === active.id ? 'is-active' : ''}`}
+                  className={`menu-tab sign ${m.id === active.id ? 'is-active' : ''}`}
                   onClick={() => setTab(m.id)}
                 >
                   {m.tab}
@@ -132,97 +134,135 @@ export function MenuPage() {
         </div>
       </div>
 
-      <section id="menu-panel" role="tabpanel" aria-labelledby={`tab-${active.id}`} className="wrap menu-panel">
-        <div className="menu-meta">
-          <h2 className="t-l">{active.title}</h2>
-          <p className="menu-meta__served">{SERVED[active.id]}</p>
-          {visible && filters.length > 0 && (
-            <p className="menu-meta__count" role="status">
-              Showing {visible.shown} of {visible.total} · {filters.map((f) => FILTERS.find((x) => x.id === f)!.label.toLowerCase()).join(', ')}
-              {filters.includes('gf') ? ', including gluten-free options (gf*)' : ''}
-              <button type="button" className="linkish" onClick={() => setFilters([])}>
-                Clear
-              </button>
-            </p>
-          )}
-          {active.id === 'feasting' && filters.length > 0 && (
-            <p className="menu-meta__count" role="status">
-              Dishes that don’t match are faded.{' '}
-              <button type="button" className="linkish" onClick={() => setFilters([])}>
-                Clear
-              </button>
-            </p>
-          )}
-        </div>
-
-        {!active.food && (
-          <nav className="menu-jump" aria-label="Drinks sections">
-            {active.sections
-              .filter((s) => s.title)
-              .map((s) => (
-                <a
-                  key={s.id}
-                  href={`#${s.id}`}
-                  onClick={(e) => {
-                    e.preventDefault()
-                    document.getElementById(s.id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-                  }}
-                >
-                  {s.title}
-                </a>
-              ))}
-          </nav>
-        )}
-
-        <AnimatePresence mode="wait">
-          <motion.div key={active.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.35 }}>
-            {active.id === 'feasting' ? (
-              <div className="feasts">
-                {FEASTS.map((f) => (
-                  <FeastCard key={f.id} f={f} filters={filters} />
-                ))}
-                <aside className="feasts__aside">
-                  <p className="label">Private hire</p>
-                  <p>Both feasting menus are available for the private dining room upstairs and for hire of the whole building.</p>
-                  <Link to="/private-hire" state={{ scrollTo: 'enquire' }} className="link">
-                    Make an enquiry
-                  </Link>
-                </aside>
-              </div>
-            ) : visible && visible.sections.length ? (
-              <div className="menu-cols">
-                {balance(visible.sections).map((col, ci) => (
-                  <div key={ci} className="menu-col">
-                    {col.map(({ s, i }) => (
-                      <Section key={s.id} order={i} s={s.title === active.title ? { ...s, title: undefined } : s} />
-                    ))}
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="menu-empty">
-                <p>Nothing on this menu matches every filter you’ve chosen.</p>
-                <button type="button" className="linkish" onClick={() => setFilters([])}>
-                  Clear the filters
-                </button>
-              </div>
-            )}
-          </motion.div>
+      <div className="menu-stage">
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.aside key={`l-${active.id}`} className="menu-pins menu-pins--l" aria-hidden="true" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+            <Pinned name={pins[0].name} caption={pins[0].caption} r={-5} sizes="220px" />
+          </motion.aside>
         </AnimatePresence>
 
-        <footer className="menu-foot">
-          <p>{SERVICE_NOTE}</p>
-          <p className="menu-foot__key">v = vegetarian, vg = vegan, gf = gluten free, gf* = gluten free option available</p>
-          <div className="menu-foot__actions">
-            <Link to={active.id === 'brunch' ? '/book?service=brunch' : active.id === 'lunch-dinner' ? '/book?service=dinner&time=1140' : '/book'} className="btn">
-              Book a table
-            </Link>
-            <Link to="/private-hire" className="link">
-              Private hire
-            </Link>
-          </div>
-        </footer>
-      </section>
+        <section id="menu-panel" role="tabpanel" aria-labelledby={`tab-${active.id}`} className="menu-main">
+          <AnimatePresence mode="wait">
+            <motion.div key={active.id} initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 8 }} transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}>
+              {active.id === 'feasting' ? (
+                <div className="feasts">
+                  <div className="feasts__head">
+                    <h2 className="print feasts__title">Feasting</h2>
+                    <p>{SERVED.feasting}</p>
+                    {filters.length > 0 && (
+                      <p className="menu-count" role="status">
+                        Dishes that don’t match are faded.{' '}
+                        <button type="button" className="linkish" onClick={() => setFilters([])}>
+                          Clear
+                        </button>
+                      </p>
+                    )}
+                  </div>
+                  <div className="feasts__cards">
+                    {FEASTS.map((f) => (
+                      <FeastCard key={f.id} f={f} filters={filters} />
+                    ))}
+                  </div>
+                  <div className="feasts__foot">
+                    <p>Both feasting menus are served in the private dining room upstairs and for hire of the whole building.</p>
+                    <div className="actions">
+                      <Link to="/private-hire" state={{ scrollTo: 'enquire' }} className="btn btn--ink">
+                        Plan a party
+                      </Link>
+                      <Link to="/book" className="link">
+                        Book a table
+                      </Link>
+                    </div>
+                    <p className="small feasts__note">{SERVICE_NOTE}</p>
+                  </div>
+                </div>
+              ) : (
+                <article className={`arch menu-arch g-paper ${active.food ? '' : 'menu-arch--drinks'}`}>
+                  <AMono />
+                  <h2 className="print menu-arch__title">{active.title}</h2>
+                  <p className="menu-arch__served">{SERVED[active.id]}</p>
+                  {visible && filters.length > 0 && (
+                    <p className="menu-count" role="status">
+                      Showing {visible.shown} of {visible.total} · {filters.map((f) => FILTERS.find((x) => x.id === f)!.label.toLowerCase()).join(', ')}
+                      {filters.includes('gf') ? ', including gluten-free options (gf*)' : ''}{' '}
+                      <button type="button" className="linkish" onClick={() => setFilters([])}>
+                        Clear
+                      </button>
+                    </p>
+                  )}
+                  <span className="menu-arch__rule" aria-hidden="true" />
+
+                  {!active.food && (
+                    <nav className="menu-jump" aria-label="Drinks sections">
+                      {active.sections
+                        .filter((s) => s.title)
+                        .map((s) => (
+                          <a
+                            key={s.id}
+                            href={`#${s.id}`}
+                            className="sign"
+                            onClick={(e) => {
+                              e.preventDefault()
+                              document.getElementById(s.id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                            }}
+                          >
+                            {s.title}
+                          </a>
+                        ))}
+                    </nav>
+                  )}
+
+                  {visible && visible.sections.length ? (
+                    active.food ? (
+                      <div className="msecs">
+                        {visible.sections.map((s) => (
+                          <Section key={s.id} s={s.title === active.title ? { ...s, title: undefined } : s} />
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="menu-cols">
+                        {balance(visible.sections).map((col, ci) => (
+                          <div key={ci} className="menu-col">
+                            {col.map(({ s, i }) => (
+                              <Section key={s.id} order={i} s={s} />
+                            ))}
+                          </div>
+                        ))}
+                      </div>
+                    )
+                  ) : (
+                    <div className="menu-empty">
+                      <p>Nothing on this menu matches every filter you’ve chosen.</p>
+                      <button type="button" className="linkish" onClick={() => setFilters([])}>
+                        Clear the filters
+                      </button>
+                    </div>
+                  )}
+
+                  <footer className="menu-arch__foot">
+                    <p>{SERVICE_NOTE}</p>
+                    <p className="menu-arch__key">v = vegetarian, vg = vegan, gf = gluten free, gf* = gluten free option available</p>
+                    <div className="actions">
+                      <Link to={book} className="btn btn--ink">
+                        Book a table
+                      </Link>
+                      <Link to="/private-hire" className="link">
+                        Private hire
+                      </Link>
+                    </div>
+                  </footer>
+                </article>
+              )}
+            </motion.div>
+          </AnimatePresence>
+        </section>
+
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.aside key={`r-${active.id}`} className="menu-pins menu-pins--r" aria-hidden="true" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+            <Pinned name={pins[1].name} caption={pins[1].caption} r={4} sizes="220px" />
+          </motion.aside>
+        </AnimatePresence>
+      </div>
     </div>
   )
 }
@@ -245,10 +285,10 @@ function balance(sections: MenuSection[]) {
   return cols
 }
 
-function Section({ s, order }: { s: MenuSection; order: number }) {
+function Section({ s, order }: { s: MenuSection; order?: number }) {
   const cols = s.columns
   return (
-    <section className="msec" id={s.id} style={{ order }} aria-labelledby={s.title || s.note ? `${s.id}-h` : undefined}>
+    <section className="msec" id={s.id} style={order !== undefined ? { order } : undefined} aria-labelledby={s.title || s.note ? `${s.id}-h` : undefined}>
       {(s.title || s.note || cols) && (
         <div className="msec__head">
           {s.title && (
@@ -283,7 +323,7 @@ function Section({ s, order }: { s: MenuSection; order: number }) {
                   <p className="mitem__cols">
                     {i.prices.map((p, k) => (
                       <span key={k} aria-label={p.price ? `${cols[k]} ${p.price}` : undefined}>
-                        {p.price || '–'}
+                        {p.price || ''}
                       </span>
                     ))}
                   </p>
@@ -291,7 +331,7 @@ function Section({ s, order }: { s: MenuSection; order: number }) {
               ) : (
                 <>
                   <p className="mitem__name">
-                    {i.name} <span className="mitem__price">{price(i)}</span>
+                    <strong>{i.name}</strong> <span className="mitem__price">{price(i)}</span>
                   </p>
                   {(i.desc || i.diet) && (
                     <p className={`mitem__desc ${i.descItalic ? 'is-italic' : ''}`}>
@@ -325,37 +365,34 @@ export function FeastCard({ f, filters = [] }: { f: FeastMenu; filters?: Filter[
     ...(f.dessert ? ([['To finish', f.dessert]] as [string, MenuItem[]][]) : []),
   ]
   return (
-    <article className="feast" aria-labelledby={`${f.id}-title`}>
-      <div className="feast__arch">
-        <svg className="feast__a" width="20" height="32" viewBox="0 0 31 50" aria-hidden="true">
-          <path d="M3 48 V17 a12.5 12.5 0 0 1 25 0 V48 M3 30 H28" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
-        </svg>
-        <h3 id={`${f.id}-title`} className="feast__title">
-          {f.title}
-          <span className="feast__price">{f.price}</span>
-        </h3>
-        {groups.map(([label, items], gi) => (
-          <div key={label} className="feast__group">
-            <ul>
-              {items.map((i) => (
-                <li key={i.id} className={matches(i, filters) ? '' : 'is-faded'}>
-                  <strong>{i.name}</strong>
-                  <span>
-                    {i.desc}
-                    <Diet diet={i.diet} />
-                  </span>
-                </li>
-              ))}
-            </ul>
-            {gi === 1 && (
-              <p className="feast__sides">
-                <em>{f.sidesLead}</em>
-                <span>{f.id === 'feast-1' ? f.sides.join(' · ') : f.sides.join(' | ')}</span>
-              </p>
-            )}
-          </div>
-        ))}
-      </div>
+    <article className="feast arch g-paper" aria-labelledby={`${f.id}-title`}>
+      <AMono />
+      <h3 id={`${f.id}-title`} className="feast__title print">
+        {f.title}
+        <span className="feast__price">{f.price}</span>
+      </h3>
+      {groups.map(([label, items], gi) => (
+        <div key={label} className="feast__group">
+          <p className="sr-only">{label}</p>
+          <ul>
+            {items.map((i) => (
+              <li key={i.id} className={matches(i, filters) ? '' : 'is-faded'}>
+                <strong>{i.name}</strong>
+                <span>
+                  {i.desc}
+                  <Diet diet={i.diet} />
+                </span>
+              </li>
+            ))}
+          </ul>
+          {gi === 1 && (
+            <p className="feast__sides">
+              <em>{f.sidesLead}</em>
+              <span>{f.id === 'feast-1' ? f.sides.join(' · ') : f.sides.join(' | ')}</span>
+            </p>
+          )}
+        </div>
+      ))}
     </article>
   )
 }

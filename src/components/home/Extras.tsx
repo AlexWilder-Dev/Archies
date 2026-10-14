@@ -17,9 +17,10 @@ export function Newsletter() {
   return (
     <AnimatePresence mode="wait" initial={false}>
       {done ? (
-        <motion.div key="done" initial={{ opacity: 0 }} animate={{ opacity: 1 }} role="status">
+        <motion.div key="done" initial={{ opacity: 0 }} animate={{ opacity: 1 }} role="status" className="news news--done">
           <p className="label">Newsletter</p>
-          <p>Thank you. New menus and events will go to {email}.</p>
+          <p className="display news__title">You’re on the list</p>
+          <p>New menus and events will go to {email}.</p>
           <p className="small muted">Demo: nothing has been sent.</p>
         </motion.div>
       ) : (
@@ -27,7 +28,7 @@ export function Newsletter() {
           <label htmlFor="news-email" className="label">
             Newsletter
           </label>
-          <p>New menus and events, now and then.</p>
+          <p className="display news__title">New menus and events, now and then</p>
           <div className="news__row">
             <input
               id="news-email"
@@ -41,7 +42,7 @@ export function Newsletter() {
               aria-describedby={error ? 'news-error' : undefined}
               className="field__input"
             />
-            <button type="submit" className="btn btn--line">
+            <button type="submit" className="btn">
               Sign up
             </button>
           </div>

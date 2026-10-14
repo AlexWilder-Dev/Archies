@@ -1,13 +1,33 @@
 import { Link } from 'react-router-dom'
 import { HOURS_ROWS } from '../data/hours'
 import { site } from '../data/site'
+import { Newsletter } from './home/Extras'
 import { Logo } from './Logo'
 
 export function Footer() {
   return (
-    <footer className="footer">
+    <footer className="footer g-night">
       <div className="wrap">
-        <Logo className="footer__logo" />
+        <div className="footer__band">
+          <div className="footer__news">
+            <Newsletter />
+          </div>
+          <div className="footer__gift">
+            <p className="label">Gift cards</p>
+            <p>Brunch, dinner or a round of margaritas, bought online.</p>
+            <a className="btn btn--sm" href={site.giftCards} target="_blank" rel="noreferrer">
+              Buy a gift card
+            </a>
+          </div>
+          <div className="footer__sister">
+            <p className="label">Our sister site</p>
+            <p>Archie’s Archway, in north London.</p>
+            <a className="link" href={site.sister.url} target="_blank" rel="noreferrer">
+              archieslondon.co.uk
+            </a>
+          </div>
+        </div>
+
         <div className="footer__cols">
           <div>
             <p className="label">Visit</p>
@@ -31,7 +51,7 @@ export function Footer() {
             <p className="footer__soft">Lunch from 12pm · dinner from 5:30pm</p>
           </div>
           <div>
-            <p className="label">Contact</p>
+            <p className="label">Get in touch</p>
             <p>
               <a className="text-link" href={`mailto:${site.email}`}>
                 {site.email}
@@ -45,11 +65,11 @@ export function Footer() {
             </p>
           </div>
           <div>
-            <p className="label">Elsewhere</p>
+            <p className="label">Follow</p>
             <ul className="footer__links">
               <li>
                 <a href={site.instagram} target="_blank" rel="noreferrer">
-                  Instagram
+                  Instagram {site.instagramHandle}
                 </a>
               </li>
               <li>
@@ -58,25 +78,23 @@ export function Footer() {
                 </a>
               </li>
               <li>
-                <a href={site.giftCards} target="_blank" rel="noreferrer">
-                  Gift cards
-                </a>
-              </li>
-              <li>
-                <a href={site.sister.url} target="_blank" rel="noreferrer">
-                  {site.sister.name}
-                </a>
-              </li>
-              <li>
                 <Link to="/private-hire">Private hire</Link>
+              </li>
+              <li>
+                <Link to="/book">Book a table</Link>
               </li>
             </ul>
           </div>
         </div>
-        <div className="footer__base">
-          <span>© {new Date().getFullYear()} {site.name}</span>
-          <span>Site by AlexWilder-Dev</span>
-        </div>
+      </div>
+
+      <div className="footer__mark" aria-hidden="true">
+        <Logo className="footer__logo" title="" />
+      </div>
+
+      <div className="wrap footer__base">
+        <span>© {new Date().getFullYear()} {site.name}</span>
+        <span>Site by AlexWilder-Dev</span>
       </div>
     </footer>
   )

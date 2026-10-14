@@ -1,480 +1,480 @@
 /* ------------------------------------------------------------------
-   Tones: a section can borrow the other half of the day
-   ------------------------------------------------------------------ */
-.tone-dark,
-.spread--dark {
-  --bg: #16110c;
-  --bg-2: #201811;
-  --ink: #f0e5d4;
-  --soft: #bba98f;
-  --faint: #8c7c66;
-  --line: rgba(240, 229, 212, 0.13);
-  --line-2: rgba(240, 229, 212, 0.3);
-  --link: #f0e5d4;
-  background: var(--bg);
-  color: var(--ink);
-}
-.tone-light,
-.spread--light {
-  --bg: #f3ebe1;
-  --bg-2: #ebdfd1;
-  --ink: #26231a;
-  --soft: #665c4b;
-  --faint: #93897a;
-  --line: rgba(38, 35, 26, 0.15);
-  --line-2: rgba(38, 35, 26, 0.32);
-  --link: #26231a;
-  background: var(--bg);
-  color: var(--ink);
-}
-
-.frame {
-  margin: 0;
-}
-.frame .photo {
-  width: 100%;
-}
-
-/* ------------------------------------------------------------------
-   Hero: the photograph does the talking
+   Hero: one photograph, edge to edge, and the sign across the bottom
    ------------------------------------------------------------------ */
 .hero {
-  display: grid;
-  grid-template-columns: minmax(0, 58fr) minmax(0, 42fr);
-  min-height: calc(100vh - var(--fascia-h) - 34px);
-  min-height: calc(100svh - var(--fascia-h) - 34px);
-}
-.hero__photo {
   position: relative;
+  height: 100vh;
+  height: 100svh;
+  min-height: 600px;
+  max-height: 1080px;
   overflow: hidden;
-  background: var(--bg-2);
+  background: var(--night);
+  color: #f4e9d8;
 }
-.hero__photo-layer {
+.hero__media,
+.hero__layer {
   position: absolute;
   inset: 0;
 }
-.hero__photo-layer .photo {
+.hero__layer .photo {
   width: 100%;
   height: 100%;
+  background: var(--night);
 }
-.hero__text {
+.hero__shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(14, 10, 6, 0.6) 0, rgba(14, 10, 6, 0) 20%, rgba(14, 10, 6, 0) 44%, rgba(14, 10, 6, 0.9) 100%);
+  pointer-events: none;
+}
+.hero__bottom {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: clamp(22px, 3.2vw, 46px);
+  max-width: var(--max);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+.hero__row {
   display: flex;
-  flex-direction: column;
   justify-content: space-between;
-  gap: 48px;
-  padding: clamp(48px, 7vh, 96px) var(--gutter) clamp(32px, 5vh, 56px) clamp(36px, 4.5vw, 80px);
-}
-.hero__title {
-  max-width: 17ch;
-  font-size: clamp(30px, 3vw, 46px);
-}
-.hero__lede {
-  margin: 28px 0 0;
+  align-items: flex-end;
+  gap: 16px 40px;
+  margin-bottom: clamp(16px, 2.2vw, 32px);
 }
 .hero__status {
-  margin-top: 28px;
-}
-.hero__actions {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 18px 30px;
-  margin-top: 36px;
+  align-items: flex-start;
+  gap: 12px;
+  max-width: 64ch;
+  margin: 0;
+  font-size: clamp(17px, 0.4vw + 15px, 20px);
+  line-height: 1.4;
+  color: #eee2ce;
 }
-.hero__aside {
-  display: grid;
-  grid-template-columns: clamp(96px, 9vw, 136px) minmax(0, 1fr);
-  align-items: end;
-  gap: 20px;
-}
-.hero__aside .photo {
-  aspect-ratio: 4 / 5;
-}
-.hero__aside .photo img {
-  object-position: 30% 50%;
+.hero__status .dot {
+  margin-top: 0.5em;
 }
 .hero__where {
   margin: 0;
-  max-width: 26ch;
-  font-size: 15px;
-  color: var(--soft);
-}
-
-/* the day in one line */
-.services {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 32px;
-  padding-top: 30px;
-  padding-bottom: 0;
-}
-.services__item {
-  padding-top: 18px;
-  border-top: 1px solid var(--line-2);
-}
-.services__item .label {
-  margin-bottom: 6px;
-}
-.services__item p:last-child {
-  margin: 0;
-  max-width: 24ch;
-}
-
-/* ------------------------------------------------------------------
-   Spreads: menu text beside a photograph
-   ------------------------------------------------------------------ */
-.spread {
-  padding-block: clamp(72px, 9vw, 136px);
-  transition:
-    background-color 600ms var(--ease),
-    color 600ms var(--ease);
-}
-.spread--band {
-  margin-block: clamp(40px, 5vw, 80px);
-}
-.spread__grid {
-  display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
-  column-gap: clamp(16px, 2vw, 32px);
-  align-items: start;
-}
-.spread__text {
-  grid-column: 1 / span 5;
-  grid-row: 1;
-}
-.spread__photo {
-  grid-column: 7 / span 6;
-  grid-row: 1;
-}
-.spread--flip .spread__text {
-  grid-column: 8 / span 5;
-}
-.spread--flip .spread__photo {
-  grid-column: 1 / span 6;
-}
-.spread__photo .photo {
-  aspect-ratio: 4 / 5;
-}
-.spread__intro {
-  margin: 20px 0 0;
-  max-width: 38ch;
-  font-size: 19px;
-  color: var(--soft);
-}
-.spread__menu {
-  margin-top: 44px;
-}
-.spread__sub {
-  margin-top: 34px;
-}
-.spread__actions {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 16px 28px;
-  margin-top: 40px;
-}
-
-.dishes {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  gap: 20px;
-}
-.dishes--short {
-  gap: 7px;
-}
-.dishes__name {
-  margin: 0;
-  font-size: 19px;
-  line-height: 1.3;
-  font-weight: 700;
-}
-.dishes__price {
-  font-weight: 400;
   white-space: nowrap;
-  color: var(--soft);
+  color: #e9dcc6;
 }
-.dishes--short .dishes__name {
-  font-weight: 500;
-  font-size: 18px;
-}
-.dishes__desc {
-  margin: 3px 0 0;
-  font-size: 16.5px;
-  line-height: 1.45;
-  color: var(--soft);
-  max-width: 46ch;
-}
-
-.quote {
-  margin-top: 64px;
-  padding-top: 22px;
-  border-top: 1px solid var(--line);
-}
-.quote__text {
-  margin: 0 0 8px;
-  font-family: var(--font-sign);
-  font-weight: 300;
-  font-size: clamp(20px, 1.7vw, 26px);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
-.quote__mark {
-  font-family: var(--font-text);
-  font-weight: 400;
-  letter-spacing: 0;
-}
-.quote__source {
+.hero__mark {
   margin: 0;
-  font-size: 15px;
-  color: var(--faint);
+  overflow: hidden;
+  line-height: 0;
 }
-
-/* ------------------------------------------------------------------
-   Gallery: three, uneven
-   ------------------------------------------------------------------ */
-.gallery {
-  display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
-  column-gap: clamp(16px, 2vw, 32px);
-  align-items: start;
-  padding-block: clamp(24px, 4vw, 64px) clamp(32px, 4vw, 72px);
-}
-.gallery__a {
-  grid-column: 1 / span 6;
-}
-.gallery__a .photo {
-  aspect-ratio: 4 / 5;
-}
-.gallery__b {
-  grid-column: 7 / span 3;
-  margin-top: 30%;
-}
-.gallery__b .photo {
-  aspect-ratio: 3 / 4;
-}
-.gallery__c {
-  grid-column: 10 / span 3;
-  margin-top: 8%;
-}
-.gallery__c .photo {
-  aspect-ratio: 3 / 4;
-}
-
-/* ------------------------------------------------------------------
-   Feasting
-   ------------------------------------------------------------------ */
-.feasting {
-  padding-bottom: clamp(88px, 11vw, 160px);
-}
-.feasting__photo .photo {
-  aspect-ratio: 21 / 9;
-}
-.feasting__grid {
-  display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
-  column-gap: clamp(16px, 2vw, 32px);
-  margin-top: clamp(-120px, -8vw, -60px);
-  position: relative;
-}
-.feasting__text {
-  grid-column: 1 / span 4;
-  align-self: end;
-  padding-top: clamp(90px, 10vw, 150px);
-}
-.feasting__cards {
-  grid-column: 6 / span 7;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: clamp(12px, 1.6vw, 24px);
-  align-items: start;
-}
-
-/* the arched card, as printed on their feasting menus */
-.arch-card {
+.hero__mark-in {
   display: block;
-  padding: 12px;
-  background: var(--feast);
-  color: #26231a;
+}
+.hero__logo {
+  width: 100%;
+  height: auto;
+  color: var(--orange);
+}
+
+/* ------------------------------------------------------------------
+   The board: a photograph beside the night's (or morning's) prices
+   ------------------------------------------------------------------ */
+.board {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  min-height: min(100vh, 940px);
+}
+.board__photo {
+  position: relative;
+  overflow: hidden;
+  background: #0c0906;
+}
+.board__layer {
+  position: absolute;
+  inset: 0;
+}
+.board__layer .photo {
+  width: 100%;
+  height: 100%;
+}
+.board__caption {
+  position: absolute;
+  left: 22px;
+  bottom: 18px;
+  margin: 0;
+  font-size: 16px;
+  color: #fff;
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.55);
+}
+.board__panel {
+  display: flex;
+  align-items: center;
+  padding: clamp(56px, 7vw, 104px) clamp(24px, 5vw, 76px);
+}
+.board__inner {
+  width: 100%;
+  max-width: 640px;
+}
+.board__label {
+  margin-bottom: 26px;
+}
+.board__rows {
+  list-style: none;
+  margin: 0 0 22px;
+  padding: 0;
+  border-bottom: 1px solid var(--line);
+}
+.board__row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  column-gap: 20px;
+  padding: 15px 0 14px;
+  border-top: 1px solid var(--line);
   text-decoration: none;
-  transition: transform 500ms var(--ease);
 }
-.arch-card:hover {
-  transform: translateY(-6px);
+.board__name {
+  font-size: clamp(25px, 2.4vw, 36px);
+  letter-spacing: 0.06em;
+  transition: color 300ms var(--ease);
 }
-.arch-card__inner {
+.board__price {
+  font-size: 22px;
+  color: var(--soft);
+}
+.board__desc {
+  grid-column: 1 / -1;
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  font-size: 16px;
+  line-height: 1.4;
+  color: var(--soft);
+  transition:
+    max-height 500ms var(--ease),
+    opacity 400ms var(--ease),
+    margin 500ms var(--ease);
+}
+.board__row:hover .board__name,
+.board__row.is-on .board__name {
+  color: var(--orange);
+}
+.board__row.is-on .board__desc {
+  max-height: 4.5em;
+  margin-top: 6px;
+  opacity: 1;
+}
+.board__note {
+  margin: 0 0 30px;
+  font-size: 16px;
+  color: var(--soft);
+}
+
+/* ------------------------------------------------------------------
+   The wall: photographs pinned to the plaster, and neon
+   ------------------------------------------------------------------ */
+.wall {
+  position: relative;
+  overflow: hidden;
+}
+.wall__inner {
+  display: grid;
+  grid-template-columns: minmax(0, 0.78fr) minmax(0, 1.22fr);
+  gap: clamp(32px, 4vw, 64px);
+  align-items: center;
+  max-width: var(--max);
+  margin-inline: auto;
+  padding: clamp(80px, 9vw, 140px) var(--gutter);
+}
+.wall__text {
+  position: relative;
+  z-index: 8;
+}
+.wall__text .display {
+  margin-bottom: 26px;
+}
+.wall__text .lede {
+  margin-bottom: 26px;
+}
+.wall__walkin {
+  max-width: 40ch;
+  padding-top: 16px;
+  margin-bottom: 32px;
+  border-top: 1px solid var(--line-2);
+  font-size: 17px;
+  color: var(--soft);
+}
+.wall__walkin strong {
+  color: var(--ink);
+}
+.wall__board {
+  position: relative;
+  aspect-ratio: 1 / 1.02;
+}
+.wall__board .pin {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  width: var(--w);
+}
+.pin.is-draggable {
+  cursor: grab;
+  touch-action: none;
+}
+.pin.is-draggable:active {
+  cursor: grabbing;
+}
+.pin img {
+  pointer-events: none;
+  -webkit-user-drag: none;
+}
+.clipping {
+  position: absolute;
+  left: 0;
+  top: 21%;
+  z-index: 6;
+  width: 25%;
+  margin: 0;
+  padding: 22px 18px 16px;
+  background: #f5edda;
+  color: var(--ink-0);
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.16),
+    0 14px 24px -14px rgba(60, 30, 10, 0.55);
+}
+/* two strips of tape */
+.clipping::before {
+  content: '';
+  position: absolute;
+  top: -9px;
+  left: 50%;
+  width: 70px;
+  height: 20px;
+  margin-left: -35px;
+  background: rgba(255, 250, 235, 0.62);
+  box-shadow: 0 0 0 1px rgba(160, 130, 90, 0.12);
+  transform: rotate(-4deg);
+}
+.clipping blockquote {
+  margin: 0;
+}
+.clipping blockquote p {
+  margin: 0 0 10px;
+  font-weight: 900;
+  font-size: clamp(19px, 1.7vw, 26px);
+  line-height: 1.1;
+}
+.clipping figcaption {
+  font-style: italic;
+  font-size: 14px;
+  line-height: 1.3;
+  color: #5d5442;
+}
+.wall__neon {
+  position: absolute;
+  left: 3%;
+  bottom: -2%;
+  z-index: 7;
+  font-size: clamp(46px, 5vw, 78px);
+  transform: rotate(-5deg);
+}
+
+/* ------------------------------------------------------------------
+   Feasting and private hire, inside the arch
+   ------------------------------------------------------------------ */
+.feasthire {
+  overflow: hidden;
+  padding-top: clamp(64px, 8vw, 120px);
+}
+.feasthire__arch {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 5px;
-  padding: clamp(36px, 4vw, 56px) 18px 26px;
-  background: #fffaf2;
-  border-radius: 999px 999px 0 0;
+  width: min(1100px, calc(100% - 2 * var(--gutter)));
+  margin-inline: auto;
+  padding: clamp(60px, 8vw, 112px) clamp(18px, 4vw, 64px) clamp(56px, 6vw, 92px);
   text-align: center;
 }
-.arch-card__a {
-  margin-bottom: 8px;
+.feasthire__kicker {
+  margin: 20px 0 16px;
+  color: #7b5a1d;
 }
-.arch-card__title {
-  font-weight: 700;
+.feasthire__title {
+  max-width: 8.6em;
+  font-size: clamp(36px, 4.4vw, 62px);
+  text-wrap: balance;
+}
+.feasthire__intro {
+  max-width: 44ch;
+  margin: 20px auto 46px;
+  font-size: clamp(18px, 0.4vw + 16px, 21px);
+  color: var(--soft);
+}
+.windows {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: clamp(14px, 2vw, 28px);
+  width: 100%;
+}
+.window {
+  width: min(280px, 30%);
+}
+.window--tall {
+  width: min(320px, 34%);
+}
+.window__link {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  text-decoration: none;
+}
+.window__frame {
+  display: block;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+}
+.window--tall .window__frame {
+  aspect-ratio: 3 / 4.3;
+}
+.window__frame .photo {
+  width: 100%;
+  height: 100%;
+}
+.window__frame img {
+  transition: transform 1.2s var(--ease);
+}
+.window__link:hover img {
+  transform: scale(1.045);
+}
+.window__title {
+  margin-top: 14px;
+  font-weight: 900;
   font-size: 19px;
+  line-height: 1.15;
+  text-transform: uppercase;
 }
-.arch-card__price {
-  font-weight: 700;
-  font-size: 24px;
-  color: #a7500d;
-}
-.arch-card__rule {
-  width: 60%;
-  height: 1px;
-  margin: 12px 0 10px;
-  background: rgba(167, 80, 13, 0.3);
-}
-.arch-card__dish {
+.window__meta {
+  max-width: 24ch;
   font-size: 16px;
   line-height: 1.35;
+  color: var(--soft);
 }
-.arch-card__sides {
-  margin-top: 12px;
-  font-size: 14px;
-  font-style: italic;
-  color: #6b604c;
+.feasthire__actions {
+  justify-content: center;
+  margin-top: 48px;
 }
-
-/* ------------------------------------------------------------------
-   Private hire
-   ------------------------------------------------------------------ */
-.hire-home {
-  padding-block: clamp(80px, 10vw, 150px);
-  border-top: 1px solid var(--line);
-}
-.hire-home__head {
-  max-width: 720px;
-}
-.hire-home__spaces {
-  display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
-  column-gap: clamp(16px, 2vw, 32px);
-  margin-top: clamp(48px, 6vw, 80px);
-  align-items: start;
-}
-.space-sum {
-  grid-column: 1 / span 5;
-}
-.space-sum--b {
-  grid-column: 7 / span 5;
-  margin-top: clamp(80px, 10vw, 160px);
-}
-.space-sum__photo {
-  display: block;
-}
-.space-sum__photo .photo {
-  aspect-ratio: 4 / 5;
-}
-.space-sum .t-m {
-  margin: 26px 0 14px;
-}
-.specs {
-  margin: 0;
-}
-.specs div {
-  display: grid;
-  grid-template-columns: 100px minmax(0, 1fr);
-  gap: 16px;
-  padding: 10px 0;
-  border-top: 1px solid var(--line);
-}
-.specs dt {
-  font-family: var(--font-sign);
-  font-weight: 700;
-  font-size: 10px;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--faint);
-  padding-top: 5px;
-}
-.specs dd {
-  margin: 0;
-  font-size: 17px;
-}
-.hire-home__actions {
-  margin-top: clamp(48px, 6vw, 80px);
+.feasthire__email {
+  margin: 24px 0 0;
+  font-size: 16px;
+  color: var(--soft);
 }
 
 /* ------------------------------------------------------------------
    Find us
    ------------------------------------------------------------------ */
 .findus {
+  padding-block: clamp(80px, 9vw, 140px);
+  scroll-margin-top: 0;
+}
+.findus__grid {
   display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
-  column-gap: clamp(16px, 2vw, 32px);
-  padding-block: clamp(80px, 10vw, 150px);
-  border-top: 1px solid var(--line);
-  align-items: start;
-}
-.findus__text {
-  grid-column: 1 / span 5;
-}
-.findus__map {
-  grid-column: 7 / span 6;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(48px, 6vw, 110px);
+  align-items: center;
 }
 .findus__addr {
-  margin: 10px 0 28px;
+  margin: 12px 0 34px;
   font-size: 20px;
   color: var(--soft);
 }
-.findus__text > p {
-  max-width: 42ch;
+.findus__rows {
+  list-style: none;
+  margin: 0 0 30px;
+  padding: 0;
+  border-bottom: 1px solid var(--line);
 }
-.findus__today {
+.findus__rows li {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 0;
+  border-top: 1px solid var(--line);
+}
+.findus__rows li span:first-child {
   font-weight: 700;
 }
-.hours {
-  width: 100%;
-  max-width: 460px;
-  margin: 28px 0 16px;
-  border-collapse: collapse;
-}
-.hours th,
-.hours td {
-  padding: 11px 0;
-  border-top: 1px solid var(--line);
-  border-bottom: 1px solid var(--line);
-  text-align: left;
-  font-weight: 400;
-}
-.hours td {
+.findus__rows li span:last-child {
   text-align: right;
-  white-space: nowrap;
+  color: var(--soft);
+}
+.findus__rows .is-today {
+  color: var(--orange) !important;
+  font-weight: 700;
+}
+.findus__hours-label {
+  margin-bottom: 10px;
+}
+.findus__rows--hours {
+  margin-bottom: 14px;
+}
+.findus__text .small {
+  margin-bottom: 32px;
+}
+.findus__map {
+  position: relative;
+  padding-bottom: 30px;
+}
+.findus__arch {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
+  padding: clamp(48px, 6vw, 84px) 6% 18px;
+  text-align: center;
+}
+.findus__dome {
+  margin: 14px 0 0;
+  color: #7b5a1d;
+}
+.findus__arch .map {
+  margin-top: -2%;
+}
+.findus__pin {
+  position: absolute;
+  right: -3%;
+  bottom: -4%;
+  z-index: 2;
+  width: 34%;
+  max-width: 230px;
 }
 
+/* the walk from the station */
 .map {
   width: 100%;
   height: auto;
 }
 .map__park {
-  fill: color-mix(in srgb, #8e9c6c 22%, transparent);
+  fill: rgba(120, 140, 80, 0.2);
 }
 .map__hatch line {
-  stroke: color-mix(in srgb, #6d7a4c 30%, transparent);
+  stroke: rgba(100, 120, 70, 0.3);
   stroke-width: 1;
 }
 .map__street path {
   fill: none;
-  stroke: var(--line-2);
+  stroke: rgba(33, 28, 18, 0.34);
   stroke-width: 1.2;
 }
 .map__rail path,
 .map__rail line {
   fill: none;
-  stroke: var(--faint);
+  stroke: #8c826f;
   stroke-width: 1;
 }
 .map__station {
   fill: none;
-  stroke: var(--ink);
+  stroke: var(--ink-0);
   stroke-width: 1.2;
 }
 .map__market rect {
@@ -486,8 +486,8 @@
 }
 .map__walk {
   fill: none;
-  stroke: var(--orange);
-  stroke-width: 2.4;
+  stroke: #e98a26;
+  stroke-width: 2.6;
   stroke-linecap: round;
   stroke-dasharray: 0.5 7;
 }
@@ -498,10 +498,9 @@
   fill: none;
   stroke: var(--orange);
   stroke-width: 1;
-  opacity: 0.6;
 }
 .map__north path {
-  fill: var(--faint);
+  fill: #8c826f;
 }
 .map__label {
   font-family: var(--font-sign);
@@ -509,149 +508,154 @@
   font-size: 11px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  fill: var(--soft);
+  fill: #5d5442;
 }
 .map__label--small {
   font-size: 9.5px;
-  fill: var(--faint);
+  fill: #8c826f;
 }
 .map__label--place {
   font-size: 14px;
-  fill: var(--ink);
+  fill: var(--ink-0);
 }
 .map__label--park {
   font-size: 12px;
   letter-spacing: 0.22em;
-  fill: color-mix(in srgb, #56633a 80%, var(--ink));
+  fill: #56633a;
 }
 .map__label--street {
   font-size: 9.5px;
   letter-spacing: 0.32em;
-  fill: var(--faint);
+  fill: #8c826f;
 }
 .map__label--walk {
-  fill: var(--orange);
+  fill: #c96f12;
 }
 
 /* ------------------------------------------------------------------
-   Gift cards · newsletter · Archway
+   Smaller screens
    ------------------------------------------------------------------ */
-.closing {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: clamp(28px, 4vw, 56px);
-  padding-block: 0 clamp(80px, 10vw, 140px);
+@media (max-width: 1100px) {
+  .wall__inner {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .wall__text {
+    max-width: 640px;
+  }
+  .wall__board {
+    width: min(100%, 760px);
+    margin-inline: auto;
+  }
 }
-.closing__item {
-  padding-top: 22px;
-  border-top: 1px solid var(--line-2);
-}
-.closing__item p {
-  max-width: 34ch;
-}
-.news__row {
-  display: flex;
-  gap: 8px;
-  margin-top: 4px;
-}
-.news__row .field__input {
-  flex: 1;
-  min-width: 0;
-  min-height: 48px;
-}
-.news .label {
-  display: block;
-}
-
-/* ------------------------------------------------------------------
-   Phones and tablets
-   ------------------------------------------------------------------ */
 @media (max-width: 900px) {
-  .hero {
-    grid-template-columns: minmax(0, 1fr);
-    min-height: 0;
+  /* clear of the booking bar along the bottom of the phone */
+  .hero__bottom {
+    bottom: calc(56px + 20px + env(safe-area-inset-bottom));
   }
-  .hero__photo {
-    aspect-ratio: 4 / 4.4;
+  .hero__row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
   }
-  .hero__text {
-    padding: 36px var(--gutter) 48px;
-    gap: 40px;
+  .hero__where {
+    font-size: 9.5px;
+    letter-spacing: 0.2em;
   }
-  .services {
-    grid-template-columns: 1fr 1fr;
-    gap: 22px 20px;
-  }
-  .spread__grid,
-  .gallery,
-  .feasting__grid,
-  .hire-home__spaces,
-  .findus {
+  .board {
     grid-template-columns: minmax(0, 1fr);
   }
-  .spread__text,
-  .spread--flip .spread__text,
-  .spread__photo,
-  .spread--flip .spread__photo,
-  .feasting__text,
-  .feasting__cards,
-  .space-sum,
-  .space-sum--b,
-  .findus__text,
-  .findus__map {
-    grid-column: 1 / -1;
-    grid-row: auto;
+  .board__photo {
+    aspect-ratio: 4 / 3.4;
   }
-  .spread__photo {
-    order: -1;
-    margin: 0 calc(var(--gutter) * -1) 44px;
+  .board__desc {
+    max-height: none;
+    margin-top: 4px;
+    opacity: 1;
+    font-size: 15px;
   }
-  .spread--band {
-    padding-top: 0;
+  .board__drinks {
+    display: none;
   }
-  .spread__photo .caption {
-    padding-inline: var(--gutter);
-  }
-  .gallery {
-    grid-template-columns: 1fr 1fr;
-    gap: 14px;
-  }
-  .gallery__a {
-    grid-column: 1 / -1;
-  }
-  .gallery__b,
-  .gallery__c {
-    grid-column: auto;
-    margin-top: 0;
-  }
-  .gallery__c {
-    margin-top: 48px;
-  }
-  .feasting__photo .photo {
-    aspect-ratio: 4 / 3;
-  }
-  .feasting__grid {
-    margin-top: 0;
-    gap: 36px;
-  }
-  .feasting__text {
-    padding-top: 48px;
-  }
-  .space-sum--b {
-    margin-top: 64px;
+  .findus__grid {
+    grid-template-columns: minmax(0, 1fr);
   }
   .findus__map {
-    margin-top: 48px;
-  }
-  .closing {
-    grid-template-columns: 1fr;
+    max-width: 560px;
   }
 }
-@media (max-width: 560px) {
-  .feasting__cards {
-    grid-template-columns: 1fr;
+@media (max-width: 700px) {
+  /* on a phone the prints are pinned up in two loose columns */
+  .wall__board {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 22px 16px;
+    aspect-ratio: auto;
+    padding-bottom: 70px;
   }
-  .specs div {
-    grid-template-columns: 84px minmax(0, 1fr);
+  .wall__board .pin {
+    position: relative;
+    left: auto;
+    top: auto;
+    width: auto;
+  }
+  .wall__board .pin:nth-of-type(2n) {
+    margin-top: 34px;
+  }
+  .wall__board .pin:nth-of-type(5) {
+    grid-column: 1 / -1;
+    width: 78%;
+    justify-self: center;
+  }
+  .clipping {
+    position: relative;
+    left: auto;
+    top: auto;
+    grid-column: 1 / -1;
+    width: 74%;
+    justify-self: center;
+    margin-top: 6px;
+  }
+  .wall__neon {
+    left: 50%;
+    bottom: 6px;
+    font-size: 48px;
+    transform: translateX(-50%) rotate(-5deg);
+  }
+  .print-photo {
+    padding: 7px 7px 7px;
+  }
+  .print-photo figcaption {
+    font-size: 13.5px;
+    margin-top: 6px;
+  }
+  .feasthire__arch {
+    padding-inline: 16px;
+  }
+  .windows {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 26px 14px;
+    align-items: start;
+  }
+  .window,
+  .window--tall {
+    width: auto;
+  }
+  .window--tall {
+    grid-column: 1 / -1;
+    order: -1;
+    width: 72%;
+    justify-self: center;
+  }
+  .window__title {
+    font-size: 16px;
+  }
+  .window__meta {
+    font-size: 14.5px;
+  }
+  .findus__pin {
+    width: 38%;
+    right: -2%;
+    bottom: -8%;
   }
 }

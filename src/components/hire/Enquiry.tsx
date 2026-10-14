@@ -6,6 +6,7 @@ import { site } from '../../data/site'
 import { addDays, formatKey, parseKey } from '../../lib/london'
 import { useMode } from '../../lib/mode'
 import { Calendar } from '../Calendar'
+import { AMono } from '../Marks'
 import { Photo } from '../Photo'
 
 type Step = 'space' | 'date' | 'guests' | 'occasion' | 'menu' | 'contact' | 'summary'
@@ -399,16 +400,17 @@ function StepWrap({ n, title, hint, children }: { n: number; title: string; hint
 
 function Success({ name, space, date, mailHref, onReset }: { name: string; space: string; date: string; mailHref: string; onReset: () => void }) {
   return (
-    <motion.div className="success" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
+    <motion.div className="success arch g-paper" initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}>
+      <AMono />
       <p className="label">Enquiry sent</p>
-      <h3 className="t-l">Thank you{name ? `, ${name}` : ''}</h3>
+      <h3 className="print">Thank you{name ? `, ${name}` : ''}</h3>
       <p>
         Your enquiry for <strong>{space}</strong>
         {date ? ` on ${date}` : ''} is with Emma at {site.hireEmail}, who will be in touch about menus, timings and the details.
       </p>
       <p className="small muted">This is a demo: nothing has been sent yet.</p>
       <div className="success__actions">
-        <a className="btn" href={mailHref}>
+        <a className="btn btn--ink" href={mailHref}>
           Email it to Emma now
         </a>
         <button type="button" className="linkish" onClick={onReset}>
