@@ -6,8 +6,8 @@ It is a front-end demo: full visual design and interactions on static data. Ther
 
 ## What's in it
 
-- **Day and evening states.** The site follows the room through the day. It reads London time against the opening hours (evening from 5:30pm, Wednesday to Saturday) and leads with brunch and coffee by day, dinner, cocktails and feasting by night. The switch in the header overrides it for the visit.
-- **Home** — hero with an open-now pill, the press line, brunch or dinner highlights, the feasting menus, an interactive drawing of the building (upstairs, downstairs, outside), private hire, a walk from Herne Hill station with the Sunday market, gift cards, newsletter and the Archway sister site.
+- **Day and evening states.** The site reads London time against the opening hours (evening from 5:30pm, Wednesday to Saturday). By day it leads with brunch and coffee; in the evening it swaps to the evening photographs and colours and leads with dinner, cocktails and feasting. The Day / Evening switch in the header overrides it for the visit.
+- **Home** — the restaurant's own photographs set as editorial spreads: hero with the open-now line, service times, brunch and dinner (in the order the time of day calls for), a gallery from the kitchen and bar, the feasting menus as their arched cards, both private hire spaces, find us (station, Brockwell Park, the Sunday market), gift cards, newsletter and the Archway sister site.
 - **Menus** (`#/menu`) — Brunch, Lunch & Dinner, Feasting and Drinks, transcribed from the restaurant's PDFs into `src/data/menu.ts`, with v / vg / gf filters (gf includes gf* options), serving times and the 12.5% service note.
 - **Private hire** (`#/private-hire`) — the Private Dining Room and Exclusive Venue Hire, both feasting menus, and a seven-step enquiry: space → date → guests → occasion → menu → contact → summary → success.
 - **Book** (`#/book`) — party size, date and time slots built from the opening hours, details, confirmation and an add-to-calendar file.

@@ -6,7 +6,6 @@ import { site } from '../../data/site'
 import { addDays, formatKey, parseKey } from '../../lib/london'
 import { useMode } from '../../lib/mode'
 import { Calendar } from '../Calendar'
-import { Mural } from '../Decor'
 import { Photo } from '../Photo'
 
 type Step = 'space' | 'date' | 'guests' | 'occasion' | 'menu' | 'contact' | 'summary'
@@ -168,7 +167,7 @@ export function Enquiry({ preset }: { preset?: { id: SpaceId; n: number } | null
                       className={`opt-card ${s.space === x.id ? 'is-on' : ''}`}
                       onClick={() => setS((st) => ({ ...st, space: x.id, sitting: undefined, date: undefined, guests: Math.min(st.guests, x.limits.standing ?? x.limits.seated), menu: undefined }))}
                     >
-                      <Photo name={x.photo} shape="arch" sizes="200px" />
+                      <Photo name={x.photo} shape="none" sizes="160px" />
                       <span className="opt-card__text">
                         <span className="opt-card__eyebrow">{x.where}</span>
                         <span className="opt-card__title">{x.name}</span>
@@ -256,7 +255,6 @@ export function Enquiry({ preset }: { preset?: { id: SpaceId; n: number } | null
                   aria-label="Number of guests"
                   style={{ '--pct': `${((s.guests - 1) / (maxGuests - 1)) * 100}%` } as CSSProperties}
                 />
-                <TableViz guests={s.guests} max={maxGuests} standing={s.format === 'standing' && space.id === 'exclusive'} />
                 {space.id === 'pdr' && s.guests >= 18 && (
                   <p className="enq__nudge">
                     Bigger crowd?{' '}
@@ -370,7 +368,7 @@ export function Enquiry({ preset }: { preset?: { id: SpaceId; n: number } | null
       </div>
 
       <div className="enq__nav">
-        <button type="button" className="btn btn--ghost" onClick={back} disabled={idx === 0}>
+        <button type="button" className="linkish enq__back" onClick={back} disabled={idx === 0}>
           Back
         </button>
         {touched && !valid[step] && (
@@ -378,8 +376,8 @@ export function Enquiry({ preset }: { preset?: { id: SpaceId; n: number } | null
             {step === 'date' ? 'Choose a sitting and a date.' : step === 'contact' ? 'Add your name and a valid email.' : 'Pick one to continue.'}
           </p>
         )}
-        <button type="button" className={`btn btn--primary ${valid[step] ? '' : 'is-soft'}`} onClick={next}>
-          {step === 'summary' ? 'Send enquiry' : 'Continue'} <span className="btn__arrow">→</span>
+        <button type="button" className={`btn ${valid[step] ? '' : 'is-soft'}`} onClick={next}>
+          {step === 'summary' ? 'Send enquiry' : 'Continue'}
         </button>
       </div>
     </div>
@@ -391,7 +389,7 @@ function StepWrap({ n, title, hint, children }: { n: number; title: string; hint
     <fieldset className="enq__fieldset">
       <legend className="enq__legend">
         <span className="enq__n">{String(n).padStart(2, '0')}</span>
-        <span className="h3">{title}</span>
+        <span className="t-m">{title}</span>
       </legend>
       {hint && <p className="enq__hint">{hint}</p>}
       <div className="enq__content">{children}</div>
@@ -399,56 +397,23 @@ function StepWrap({ n, title, hint, children }: { n: number; title: string; hint
   )
 }
 
-/* little top-down sketch of the guests filling the room */
-function TableViz({ guests, max, standing }: { guests: number; max: number; standing: boolean }) {
-  const dots = Array.from({ length: max }, (_, i) => i < guests)
-  return (
-    <div className={`tableviz ${standing ? 'tableviz--standing' : ''}`} aria-hidden="true">
-      {!standing && <div className="tableviz__table" />}
-      <div className="tableviz__dots">
-        {dots.map((on, i) => (
-          <motion.span key={i} className={on ? 'is-on' : ''} animate={{ scale: on ? 1 : 0.6, opacity: on ? 1 : 0.25 }} transition={{ duration: 0.2 }} />
-        ))}
-      </div>
-    </div>
-  )
-}
-
 function Success({ name, space, date, mailHref, onReset }: { name: string; space: string; date: string; mailHref: string; onReset: () => void }) {
   return (
-    <motion.div className="success" initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.5 }}>
-      <div className="success__burst" aria-hidden="true">
-        {[0, 1, 2, 3, 4, 5].map((i) => (
-          <motion.div
-            key={i}
-            className="success__shape"
-            initial={{ opacity: 0, scale: 0.2, x: 0, y: 0, rotate: 0 }}
-            animate={{ opacity: [0, 1, 1, 0.9], scale: 1, x: Math.cos((i / 6) * Math.PI * 2 + 0.5) * 330, y: Math.sin((i / 6) * Math.PI * 2 + 0.5) * 190, rotate: i * 40 - 60 }}
-            transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1], delay: 0.1 + i * 0.04 }}
-          >
-            <Mural />
-          </motion.div>
-        ))}
-      </div>
-      <div className="success__arch">
-        <svg viewBox="0 0 48 48" width="56" height="56" aria-hidden="true">
-          <circle cx="24" cy="24" r="22" fill="var(--orange)" />
-          <motion.path d="M14 25 l7 7 l13 -15" fill="none" stroke="#232014" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.5, delay: 0.3 }} />
-        </svg>
-        <h3 className="h2">Thank you{name ? `, ${name}` : ''}.</h3>
-        <p>
-          Your enquiry for <strong>{space}</strong>
-          {date ? ` on ${date}` : ''} is with Emma at {site.hireEmail}, who will be in touch to talk menus, timings and the details.
-        </p>
-        <p className="small muted">This is a demo: nothing has been sent yet.</p>
-        <div className="success__ctas">
-          <a className="btn btn--primary" href={mailHref}>
-            Email it to Emma now
-          </a>
-          <button type="button" className="btn btn--ghost" onClick={onReset}>
-            Start another enquiry
-          </button>
-        </div>
+    <motion.div className="success" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
+      <p className="label">Enquiry sent</p>
+      <h3 className="t-l">Thank you{name ? `, ${name}` : ''}</h3>
+      <p>
+        Your enquiry for <strong>{space}</strong>
+        {date ? ` on ${date}` : ''} is with Emma at {site.hireEmail}, who will be in touch about menus, timings and the details.
+      </p>
+      <p className="small muted">This is a demo: nothing has been sent yet.</p>
+      <div className="success__actions">
+        <a className="btn" href={mailHref}>
+          Email it to Emma now
+        </a>
+        <button type="button" className="linkish" onClick={onReset}>
+          Start another enquiry
+        </button>
       </div>
     </motion.div>
   )

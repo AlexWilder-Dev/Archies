@@ -1,7 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
-import { ArchA, Vine } from '../components/Decor'
 import { Photo } from '../components/Photo'
 import { BOOKING, DAY_SHORT, HOURS, fmtTime } from '../data/hours'
 import { site } from '../data/site'
@@ -75,12 +74,11 @@ export function Book() {
       <section className="book-hero">
         <div className="wrap book-hero__inner">
           <div>
-            <p className="eyebrow">Book a table</p>
-            <h1 className="display">Pull up a chair.</h1>
-            <p className="lede">Brunch, lunch or dinner, in a few taps. Booking is recommended at weekends.</p>
+            <p className="label">Archie’s Herne Hill</p>
+            <h1 className="t-xl">Book a table</h1>
+            <p className="lede">Brunch, lunch or dinner. Booking is recommended at weekends.</p>
           </div>
           <aside className="walkin" aria-label="Walk-ins">
-            <ArchA className="walkin__mark" size={28} />
             <p>
               <strong>Walk-ins welcome.</strong> No booking needed for the lounge and the outside tables: first come, first served.
             </p>
@@ -114,7 +112,7 @@ export function Book() {
                           For {BOOKING.maxOnlineParty + 1} or more, let us look after you properly. Our private dining room seats up to 20, and the feasting menus are made for groups.
                         </p>
                         <div className="bigparty__ctas">
-                          <Link to="/private-hire" state={{ scrollTo: 'enquire' }} className="btn btn--primary btn--sm">
+                          <Link to="/private-hire" state={{ scrollTo: 'enquire' }} className="btn btn--sm">
                             Group &amp; private hire enquiry
                           </Link>
                           <a href={`mailto:${site.hireEmail}`} className="text-link">
@@ -176,8 +174,8 @@ export function Book() {
                 </fieldset>
 
                 <div className="book__go">
-                  <button type="button" className="btn btn--primary btn--block" disabled={!ready} onClick={() => toStage('details')}>
-                    {ready ? `Continue: ${size} · ${DAY_SHORT[parseKey(date).weekday]} ${parseKey(date).d} ${monthShort(date)} · ${fmtTime(time!)}` : 'Choose a time'} <span className="btn__arrow">→</span>
+                  <button type="button" className="btn btn--block" disabled={!ready} onClick={() => toStage('details')}>
+                    {ready ? `Continue · ${size} · ${DAY_SHORT[parseKey(date).weekday]} ${parseKey(date).d} ${monthShort(date)} · ${fmtTime(time!)}` : 'Choose a time'}
                   </button>
                 </div>
               </motion.div>
@@ -188,7 +186,7 @@ export function Book() {
                 <button type="button" className="linkish book-back" onClick={() => toStage('pick')}>
                   ← Change table
                 </button>
-                <h2 className="h3">
+                <h2 className="t-m">
                   {size} {size === 1 ? 'person' : 'people'} · {formatKey(date)} · {time !== null && fmtTime(time)}
                 </h2>
                 <div className="form-grid">
@@ -216,8 +214,8 @@ export function Book() {
                   </label>
                 </div>
                 <p className="small muted">A discretionary 12.5% service charge is added to the bill.</p>
-                <button type="submit" className="btn btn--primary btn--block">
-                  Confirm booking <span className="btn__arrow">→</span>
+                <button type="submit" className="btn btn--block">
+                  Confirm booking
                 </button>
               </motion.form>
             )}
@@ -231,8 +229,7 @@ export function Book() {
         <aside className="book__aside" aria-label="Your table">
           <div className="ticket">
             <div className="ticket__arch">
-              <ArchA size={26} />
-              <p className="sign ticket__title">Your table</p>
+              <p className="label ticket__title">Your table</p>
               <dl className="ticket__rows">
                 <div>
                   <dt>Guests</dt>
@@ -254,8 +251,7 @@ export function Book() {
             </div>
           </div>
           <div className="book__photo">
-            <Photo name={service === 'dinner' ? 'banquette-candlelight' : 'shopfront-railton-road'} shape="arch" sizes="320px" />
-            <Vine className="book__vine" length={0.5} />
+            <Photo name={service === 'dinner' ? 'banquette-candlelight' : 'shopfront-railton-road'} shape="none" sizes="340px" />
           </div>
         </aside>
       </div>
@@ -295,8 +291,8 @@ function Confirmation({ size, date, time, service, name, email, bookingRef, onAg
         <motion.div className="confirm__stamp" initial={{ scale: 2, rotate: -20, opacity: 0 }} animate={{ scale: 1, rotate: -8, opacity: 1 }} transition={{ type: 'spring', stiffness: 260, damping: 16, delay: 0.2 }}>
           Booked
         </motion.div>
-        <p className="eyebrow">See you soon{name ? `, ${name.split(' ')[0]}` : ''}</p>
-        <h2 className="h2">
+        <p className="label">See you soon{name ? `, ${name.split(' ')[0]}` : ''}</p>
+        <h2 className="t-l">
           Table for {size}, {formatKey(date)} at {fmtTime(time)}.
         </h2>
         <p className="muted">
@@ -304,13 +300,13 @@ function Confirmation({ size, date, time, service, name, email, bookingRef, onAg
         </p>
         <p className="small muted">This is a demo: no booking has been made and nothing has been sent.</p>
         <div className="confirm__ctas">
-          <a className="btn btn--primary" href={ics} download="archies-herne-hill.ics">
+          <a className="btn" href={ics} download="archies-herne-hill.ics">
             Add to calendar
           </a>
-          <a className="btn btn--ghost" href={site.maps} target="_blank" rel="noreferrer">
+          <a className="link" href={site.maps} target="_blank" rel="noreferrer">
             Directions
           </a>
-          <Link className="btn btn--ghost" to={service === 'brunch' ? '/menu?tab=brunch' : '/menu?tab=lunch-dinner'}>
+          <Link className="link" to={service === 'brunch' ? '/menu?tab=brunch' : '/menu?tab=lunch-dinner'}>
             Look at the menu
           </Link>
         </div>

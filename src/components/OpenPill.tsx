@@ -5,11 +5,11 @@ export function OpenPill({ className = '' }: { className?: string }) {
   const { now } = useMode()
   const s = openStatus(now)
   return (
-    <span className={`pill ${s.open ? 'pill--open' : 'pill--closed'} ${className}`} role="status">
-      <span className="pill__dot" aria-hidden="true" />
+    <p className={`status ${s.open ? 'status--open' : ''} ${className}`} role="status">
+      <span className="status__dot" aria-hidden="true" />
       <span>
         <strong>{s.label}</strong> · {s.detail}
       </span>
-    </span>
+    </p>
   )
 }
