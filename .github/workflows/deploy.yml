@@ -3,6 +3,10 @@ name: Deploy to GitHub Pages
 on:
   push:
   workflow_dispatch:
+  # While Pages is still set to "Deploy from a branch", GitHub also publishes
+  # the raw branch on every push. Deploying again once that finishes keeps the
+  # built site on top. Once Source is set to "GitHub Actions" this never fires.
+  page_build:
 
 permissions:
   contents: read
